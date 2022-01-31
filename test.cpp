@@ -36,53 +36,52 @@ using namespace std;
 #include "helper_functions.h"
 #endif
 
+string addBinary(string &a, string &b)
+{
+    int i = a.length() - 1;
+    int j = b.length() - 1;
+    string ans;
+    int carry = 0;
+
+    while (i >= 0 || j >= 0 || carry)
+    {
+        if (i >= 0)
+        {
+            carry += a[i] - '0', i--;
+        }
+        if (j >= 0)
+        {
+            carry += b[j] - '0', j--;
+        }
+
+        ans += (carry % 2 + '0');
+        carry = carry / 2;
+    }
+    return ans;
+}
+
 void solve()
 {
-    int m, n;
-    cin >> m >> n;
-    vector<vector<int>> a(m, vector<int>(n, 1)), b(m, vector<int>(n));
+    string x, y;
+    cin >> x >> y;
 
-    for (int i = 0; i < m; i++)
+    string minn = "";
+    int k = 0;
+    while (minn.size() <= x.size())
+        minn += '1';
+
+    for (int i = 0; i <= x.size(); i++)
     {
-        for (int j = 0; j < n; j++)
+        string tmp = addBinary(x, y);
+        if (tmp < minn)
         {
-            cin >> b[i][j];
-
-            if (b[i][j] == 0)
-            {
-                for (int k = 0; k < max(m, n); k++)
-                    a[k % m][j] = a[i][k % n] = 0;
-            }
+            k = i;
+            minn = tmp;
         }
+        y += '0';
     }
 
-    // Checking
-    for (int i = 0; i < m; i++)
-    {
-        for (int j = 0; j < n; j++)
-        {
-            int or_res = 0;
-            for (int k = 0; k < max(m, n); k++)
-            {
-                or_res |= (a[k % m][j] | a[i][k % n]);
-            }
-            if (or_res != b[i][j])
-            {
-                cout << "NO\n";
-                return;
-            }
-        }
-    }
-
-    cout << "YES\n";
-    for (vector<int> &i : a)
-    {
-        for (int &j : i)
-        {
-            cout << j << " ";
-        }
-        cout << "\n";
-    }
+    cout << k << "\n";
 }
 
 int main()
@@ -97,14 +96,13 @@ int main()
     cin.tie(NULL);
     cout.tie(NULL);
     cerr.tie(NULL);
-    // int tcs = 0;
-    // cin >> tcs;
-    // for (int tc = 1; tc <= tcs; tc++)
-    // {
-    //     solve();
-    // }
+    int tcs = 0;
+    cin >> tcs;
+    for (int tc = 1; tc <= tcs; tc++)
+    {
+        solve();
+    }
 
-    solve();
     cerr << "Time elapsed: " << 1.0 * clock() / CLOCKS_PER_SEC << " s.\n";
     return 0;
 }
