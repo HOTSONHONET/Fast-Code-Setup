@@ -34,54 +34,90 @@ using namespace std;
 
 #ifndef ONLINE_JUDGE
 #include "helper_functions.h"
+#else
+#define print(...) 42
 #endif
-
-string addBinary(string &a, string &b)
-{
-    int i = a.length() - 1;
-    int j = b.length() - 1;
-    string ans;
-    int carry = 0;
-
-    while (i >= 0 || j >= 0 || carry)
-    {
-        if (i >= 0)
-        {
-            carry += a[i] - '0', i--;
-        }
-        if (j >= 0)
-        {
-            carry += b[j] - '0', j--;
-        }
-
-        ans += (carry % 2 + '0');
-        carry = carry / 2;
-    }
-    return ans;
-}
 
 void solve()
 {
-    string x, y;
-    cin >> x >> y;
-
-    string minn = "";
-    int k = 0;
-    while (minn.size() <= x.size())
-        minn += '1';
-
-    for (int i = 0; i <= x.size(); i++)
+    int n, m;
+    string s;
+    cin >> n >> s >> m;
+    map<char, int> rightMost, leftMost;
+    vector<char> chars;
+    for (int i = 0; i < n; i++)
     {
-        string tmp = addBinary(x, y);
-        if (tmp < minn)
+        rightMost[s[i]] = i;
+        if (leftMost.find(s[i]) == leftMost.end())
         {
-            k = i;
-            minn = tmp;
+            leftMost[s[i]] = i;
+            chars.push_back(s[i])
         }
-        y += '0';
     }
+    // If no of chars are not enough
+    int k = chars.size();
+    if (k < m)
+    {
+        cout << -1 << endl;
+        return;
+    }
+    // check for correct order
 
-    cout << k << "\n";
+    int minn = INT_MAX;
+    for (int i = 0; i < k - m + 1; i++)
+    {
+        char c = chars[i];
+        int startL = leftMost[c], startR = rightMost[c];
+        int delsL = 0, delsR = 0;
+        int cntL = 1, cntR = 1, j = i + 1;
+        while (cntL < m)
+        {
+            int r_val = rightMost[chras[j]];
+            int l_val = leftMost[chars[j]];
+            if (r_val - startL < 0)
+            {
+                delsL += l_val - startL - 1;
+                startL = l_val;
+            }
+            else if (r_val - startL < l_val - startL)
+            {
+                delsL += r_val - startL - 1;
+                startL = r_val;
+            }
+            else
+            {
+                delsL += l_val - startL - 1;
+                startL = l_val;
+            }
+
+            cntL++;
+        }
+
+        while (cntR < m)
+        {
+            int r_val = rightMost[chras[j]];
+            int l_val = leftMost[chars[j]];
+            if (l_val - startR < 0)
+            {
+                delsR += r_val - startR - 1;
+                startR = r_val;
+            }
+            else if (l_val - startR < r_val - startR)
+            {
+                delsR += l_val - startR - 1;
+                startR = l_val;
+            }
+            else
+            {
+                delsR += r_val - startR - 1;
+                startR = r_val;
+            }
+
+            cntR++;
+        }
+        minn = min(minn, min(delsL, delsR));
+    }
+    cout << minn << "\n";
 }
 
 int main()
@@ -102,7 +138,6 @@ int main()
     {
         solve();
     }
-
     cerr << "Time elapsed: " << 1.0 * clock() / CLOCKS_PER_SEC << " s.\n";
     return 0;
 }
