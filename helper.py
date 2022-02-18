@@ -101,23 +101,7 @@ def calXorSum(a):
 
 
 def solve():
-    x1, p1 = list(map(int, input().split()))
-    x2, p2 = list(map(int, input().split()))
-
-    p = p1 - p2
-    x = float(log10(x1/x2))
-
-    exp = x + p
-    # print(x1, x2)
-    if(exp == 0 or exp == 1):
-        print("=")
-
-    elif(exp > 0):
-        print(">")
-
-    elif(exp < 0):
-        print("=")
-
+    
 
 if __name__ == "__main__":
     tcs = int(input())

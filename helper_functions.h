@@ -12,22 +12,25 @@ using namespace std;
 #define ull unsigned long long
 #define INF 0x3f3f3f3f
 
-#define printVarName(x) cerr << #x << " : ";
 //////////////////////////// HELPER FUNCTIONS ////////////////////////////
 
 // printing variables
-template <typename T>
-void print(T v)
+void printer()
 {
-    printVarName(v);
-    cerr << v << "\n";
+    cerr << endl;
+}
+
+template <typename Head, typename... Tail>
+void printer(Head H, Tail... T)
+{
+    cerr << " " << H;
+    printer(T...);
 }
 
 // printing vectors
 template <typename T>
-void print(vector<T> v)
+void printer(vector<T> v)
 {
-    printVarName(v);
     cerr << " [";
     for (auto i : v)
         cerr << i << " ";
@@ -36,9 +39,17 @@ void print(vector<T> v)
 
 // printing sets
 template <typename T>
-void print(set<T> v)
+void printer(set<T> v)
 {
-    printVarName(v);
+    for (auto i : v)
+        cerr << i << " ";
+    cerr << "\n";
+}
+
+// printing multisets
+template <typename T>
+void printer(multiset<T> v)
+{
     for (auto i : v)
         cerr << i << " ";
     cerr << "\n";
@@ -46,9 +57,8 @@ void print(set<T> v)
 
 // printing unordered_sets
 template <typename T>
-void print(unordered_set<T> v)
+void printer(unordered_set<T> v)
 {
-    printVarName(v);
     for (auto i : v)
         cerr << i << " ";
     cerr << "\n";
@@ -56,27 +66,24 @@ void print(unordered_set<T> v)
 
 // printing unordered_map (k and v are variables)
 template <typename T>
-void print(unordered_map<T, T> v)
+void printer(unordered_map<T, T> v)
 {
-    printVarName(v);
     for (auto i : v)
         cerr << i.first << " -> " << i.second << "\n";
 }
 
 // printing map (k and v are variables)
 template <typename T>
-void print(map<T, T> v)
+void printer(map<T, T> v)
 {
-    printVarName(v);
     for (auto i : v)
         cerr << i.first << " -> " << i.second << "\n";
 }
 
 // printing unordered_map (k and v are variables)
 template <typename T>
-void print(unordered_map<T, vector<T>> v)
+void printer(unordered_map<T, vector<T>> v)
 {
-    printVarName(v);
     for (auto i : v)
     {
         cerr << i.first << " -> [";
@@ -88,9 +95,8 @@ void print(unordered_map<T, vector<T>> v)
 
 // printing map (k and v are variables)
 template <typename T>
-void print(map<T, vector<T>> v)
+void printer(map<T, vector<T>> v)
 {
-    printVarName(v);
     for (auto i : v)
     {
         cerr << i.first << " -> [";
@@ -102,9 +108,8 @@ void print(map<T, vector<T>> v)
 
 // printing vector containing pairs
 template <typename T>
-void print(vector<pair<T, T>> v)
+void printer(vector<pair<T, T>> v)
 {
-    printVarName(v);
     cerr << "[ ";
     for (auto i : v)
         cerr << "{" << i.first << "," << i.second << "},";
@@ -114,7 +119,7 @@ void print(vector<pair<T, T>> v)
 
 // printing matrix
 template <typename T>
-void print(vector<vector<T>> mat)
+void printer(vector<vector<T>> mat)
 {
     printVarName(mat);
     for (auto &v : mat)
@@ -294,4 +299,5 @@ vector<ll> giveAllSubsetSum(vector<int> arr)
     return to_return;
 }
 
+#define print(...) cerr << #__VA_ARGS__ << " : ", printer(__VA_ARGS__)
 //////////////////////////// END OF HELPER FUNCTIONS ////////////////////////////
