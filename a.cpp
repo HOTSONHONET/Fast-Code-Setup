@@ -20,18 +20,21 @@ __________________________________
 
 #include <bits/stdc++.h>
 
-using namespace std;
-
 #define ipair pair<int, int>
 #define llpair pair<long long, long long>
 #define llipair pair<long long int, long long int>
 #define ll long long
 #define lli long long int
 #define ull unsigned long long
-#define MAXX 1000000007
+#define MAXX 1000000009
 #define ull unsigned long long
 #define INF 0x3f3f3f3f
 #define nline "\n"
+#define fastio                        \
+    ios_base::sync_with_stdio(false); \
+    cin.tie(NULL)
+
+using namespace std;
 
 #ifndef ONLINE_JUDGE
 #include "helper_functions.h"
@@ -41,6 +44,24 @@ using namespace std;
 
 void solve()
 {
+    int a, b, c;
+    cin >> a >> b >> c;
+
+    int at = abs(a - 1) + abs(1 - c);
+    int bt = abs(b - c) + abs(c - 1) + abs(1 - c);
+    print(at, bt);
+    if (at < bt)
+    {
+        cout << 1 << nline;
+    }
+    else if (bt == at)
+    {
+        cout << 3 << nline;
+    }
+    else
+    {
+        cout << 2 << nline;
+    }
 }
 
 int main()
@@ -50,15 +71,12 @@ int main()
     freopen("input_output/error.txt", "w", stderr);
     freopen("input_output/output.txt", "w", stdout);
 #endif
-
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-    cout.tie(NULL);
-    cerr.tie(NULL);
-    int tcs = 0;
+    fastio;
+    int tcs = 1;
     cin >> tcs;
     for (int tc = 1; tc <= tcs; tc++)
     {
+        // cout << "Case #" << tc << ": ";
         solve();
     }
     cerr << "Time elapsed: " << 1.0 * clock() / CLOCKS_PER_SEC << " s.\n";

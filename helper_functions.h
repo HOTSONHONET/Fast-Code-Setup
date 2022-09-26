@@ -11,13 +11,14 @@ using namespace std;
 #define MAX 1000000007
 #define ull unsigned long long
 #define INF 0x3f3f3f3f
+#define nline "\n"
 
 //////////////////////////// HELPER FUNCTIONS ////////////////////////////
 
 // printing variables
 void printer()
 {
-    cerr << endl;
+    cerr << nline;
 }
 
 template <typename Head, typename... Tail>
@@ -121,14 +122,14 @@ void printer(vector<pair<T, T>> v)
 template <typename T>
 void printer(vector<vector<T>> mat)
 {
-    printVarName(mat);
+    cerr << nline;
     for (auto &v : mat)
     {
         for (auto &i : v)
         {
             cerr << i << " ";
         }
-        cerr << endl;
+        cerr << nline;
     }
 }
 
@@ -154,6 +155,30 @@ vector<vector<T>> vector_perms(vector<T> s)
     } while (next_permutation(s.begin(), s.end()));
 
     return ans;
+}
+
+template <typename T>
+void printer(priority_queue<T> pq)
+{
+    while (pq.empty() == false)
+    {
+        T top = pq.top();
+        pq.pop();
+        cerr << top << " ";
+    }
+    cerr << nline;
+}
+
+template <typename T>
+void printer(priority_queue<T, vector<T>, greater<T>> pq)
+{
+    while (pq.empty() == false)
+    {
+        T top = pq.top();
+        pq.pop();
+        cerr << top << " ";
+    }
+    cerr << nline;
 }
 
 template <typename T>
@@ -238,11 +263,11 @@ vector<T> shortestPath(vector<pair<T, T>> adj[], T V, T src, T num_nodes)
         }
     }
 
-    cerr << "Print shortest distances stored in dist[]" << endl;
+    cerr << "Print shortest distances stored in dist[]" << nline;
     dist[src] = 0;
     for (T i = 0; i < V; ++i)
     {
-        cerr << src << " -> " << i << "->" << dist[i] << endl;
+        cerr << src << " -> " << i << "->" << dist[i] << nline;
     }
 
     return dist;
@@ -298,6 +323,60 @@ vector<ll> giveAllSubsetSum(vector<int> arr)
 
     return to_return;
 }
+
+// Segment Tree Code Begins
+void buildSegTree(vector<ll> &v, vector<ll> &segTree, int idx, int low, int high)
+{
+    if (low == high)
+    {
+        segTree[idx] = v[low];
+        return;
+    }
+
+    ll mid = (low + high) >> 1;
+    buildSegTree(v, segTree, 2 * idx + 1, low, mid);
+    buildSegTree(v, segTree, 2 * idx + 2, mid + 1, high);
+
+    segTree[idx] = min(segTree[2 * idx + 1], segTree[2 * idx + 2]);
+}
+
+void update(vector<ll> &v, vector<ll> &segTree, int idx, int low, int high, int k)
+{
+    if (low == high)
+    {
+        segTree[idx] = v[k];
+        return;
+    }
+
+    ll mid = (low + high) >> 1;
+
+    if (k <= mid)
+        update(v, segTree, 2 * idx + 1, low, mid, k);
+    else
+        update(v, segTree, 2 * idx + 2, mid + 1, high, k);
+
+    segTree[idx] = min(segTree[2 * idx + 1], segTree[2 * idx + 2]);
+}
+
+ll ansQueries(vector<ll> &segTree, int idx, int low, int high, int ql, int qh)
+{
+    // If completely overlapping
+    if (low >= ql and high <= qh)
+        return segTree[idx];
+
+    // If not overlapping at all
+    if (low > qh or high < ql)
+        return INT_MAX;
+
+    // If there is a parital overlap
+    ll mid = (low + high) >> 1;
+    ll left = ansQueries(segTree, 2 * idx + 1, low, mid, ql, qh);
+    ll right = ansQueries(segTree, 2 * idx + 2, mid + 1, high, ql, qh);
+
+    return min(left, right);
+}
+
+// Segment Tree Code Ends
 
 #define print(...) cerr << #__VA_ARGS__ << " : ", printer(__VA_ARGS__)
 //////////////////////////// END OF HELPER FUNCTIONS ////////////////////////////

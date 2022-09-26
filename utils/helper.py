@@ -100,10 +100,27 @@ def calXorSum(a):
     return s
 
 
-def solve():
-    
+def solve(n, websites, m, apps):
+    ans = 1
+    i = 0
+    j = 0
+    websites = sorted(websites)
+    apps = sorted(apps)
+    while(i < n and j < m):
+        if(apps[j] == websites[i]):
+            ans += 1
+            i += 1
+        elif(apps[j] < websites[i]):
+            j += 1
+        else:
+            i += 1
+    print(ans)
+
 
 if __name__ == "__main__":
-    tcs = int(input())
-    for tc in range(tcs):
-        solve()
+    n = int(input())
+    websites = list(map(int, input().split()))
+    m = int(input())
+    apps = list(map(int, input().split()))
+
+    solve(n, websites, m, apps)
