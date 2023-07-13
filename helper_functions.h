@@ -273,20 +273,34 @@ vector<T> shortestPath(vector<pair<T, T>> adj[], T V, T src, T num_nodes)
     return dist;
 }
 
-ll expo(ll base, ll power)
+
+long long int mod_exp(long long b, long long int p, long long int m) 
+{
+    long long int res = 1;
+    while (p > 0) 
+	{
+        if (p & 1) res = (res * b)%m;
+        b = (b * b)%m;
+        p >>= 1;
+    }
+    return res;
+}
+
+ll expo(ll base, ll power, ll mod = MAXX)
 {
     ll ans = 1;
     while (power)
     {
         if (power & 1)
-            ans = ans * base % MAX;
+            ans = ans * base % mod;
 
-        base = base * base % MAX;
+        base = base * base % mod;
         power >>= 1;
     }
 
     return ans;
 }
+
 
 vector<int> seivePrimes(int n)
 {
@@ -324,59 +338,123 @@ vector<ll> giveAllSubsetSum(vector<int> arr)
     return to_return;
 }
 
-// Segment Tree Code Begins
-void buildSegTree(vector<ll> &v, vector<ll> &segTree, int idx, int low, int high)
-{
-    if (low == high)
-    {
-        segTree[idx] = v[low];
-        return;
-    }
+/*
 
-    ll mid = (low + high) >> 1;
-    buildSegTree(v, segTree, 2 * idx + 1, low, mid);
-    buildSegTree(v, segTree, 2 * idx + 2, mid + 1, high);
+Segment Tree code
 
-    segTree[idx] = min(segTree[2 * idx + 1], segTree[2 * idx + 2]);
-}
+*/
+class SegmenTree{
+    public:
+        vector<ll> segTree;
+        vector<ll> a;
+        vector<ll> lz;
+        void SegmentTree(vector<ll> v){
+            a = v;
+            int n = a.size();
+            segTree.resize(4*n + 1);
+            lz.resize(4*n + 1);
+        }
+        void build(int seg_idx, int seg_l, int seg_r){
+            if(seg_l == seg_r){
+                segTree[seg_idx] = a[seg_l];
+                return;
+            }
+            int mid = (seg_l + seg_r) >> 1;
+            build(2*seg_idx + 1, seg_l, mid);
+            build(2*seg_idx + 2, mid + 1, seg_r);
+            segTree[seg_idx] = segTree[2*seg_idx + 1] + segTree[2*seg_idx + 2];
+        }
 
-void update(vector<ll> &v, vector<ll> &segTree, int idx, int low, int high, int k)
-{
-    if (low == high)
-    {
-        segTree[idx] = v[k];
-        return;
-    }
+        void update(vector<ll> &a, int seg_idx, int seg_l, int seg_r, int a_idx){
+            if(seg_l == seg_r){
+                segTree[seg_idx] = a[a_idx];
+                return;
+            }
 
-    ll mid = (low + high) >> 1;
+            int mid = (seg_l + seg_r)>>1;
+            if(a_idx <= mid)
+                update(a, 2*seg_idx + 1, seg_l, mid, a_idx);
+            else update(a, 2*seg_idx + 2, mid + 1, seg_r, a_idx);
 
-    if (k <= mid)
-        update(v, segTree, 2 * idx + 1, low, mid, k);
-    else
-        update(v, segTree, 2 * idx + 2, mid + 1, high, k);
 
-    segTree[idx] = min(segTree[2 * idx + 1], segTree[2 * idx + 2]);
-}
+            segTree[seg_idx] = (segTree[2*seg_idx + 1] + segTree[2*seg_idx + 2]);
+        }
 
-ll ansQueries(vector<ll> &segTree, int idx, int low, int high, int ql, int qh)
-{
-    // If completely overlapping
-    if (low >= ql and high <= qh)
-        return segTree[idx];
+        ll ansQuery(int seg_idx, int seg_l, int seg_r, int ql, int qr){
+            if(seg_l >= ql && seg_r <= qr){
+                return segTree[seg_idx];
+            }
 
-    // If not overlapping at all
-    if (low > qh or high < ql)
-        return INT_MAX;
+            // Not overlapping
+            if(seg_r < ql || seg_l > qr){
+                return 0;
+            }
 
-    // If there is a parital overlap
-    ll mid = (low + high) >> 1;
-    ll left = ansQueries(segTree, 2 * idx + 1, low, mid, ql, qh);
-    ll right = ansQueries(segTree, 2 * idx + 2, mid + 1, high, ql, qh);
+            // if partial overlapping
+            int mid = (seg_l + seg_r) >> 1;
+            ll left = ansQuery(2*seg_idx + 1, seg_l, mid, ql, qr);
+            ll right = ansQuery(2*seg_idx + 2, mid + 1, seg_r, ql, qr);
 
-    return min(left, right);
-}
+            return (left + right);
+        }
 
-// Segment Tree Code Ends
+        void rangeUpdate(int seg_idx, int seg_l, int seg_r, int a_l, int a_r, int val){
+            // check for pending updates
+            if(lz[seg_idx] != 0){
+                segTree[seg_idx] += (seg_r - seg_l + 1) * lz[seg_idx];
+                if(seg_l != seg_r){
+                    lz[2*seg_idx + 1] += lz[seg_idx];
+                    lz[2*seg_idx + 2] += lz[seg_idx];
+                }
+                lz[seg_idx] = 0;
+            }
+
+            // No overlapping case
+            if(seg_l > a_r || seg_r < a_l || seg_l > seg_r) return;
+
+            // Check if current range completely lies, postpone the lz update for children
+            if(seg_l >= a_l && seg_r <= a_r){
+                segTree[seg_idx] += (seg_r - seg_l + 1) * val;
+                if(seg_l != seg_r){
+                    lz[2*seg_idx + 1] += val;
+                    lz[2*seg_idx + 2] += val;
+                }
+                return;
+            }
+            int mid = (seg_l + seg_r) >> 1;
+            rangeUpdate(2*seg_idx + 1, seg_l, mid, a_l, a_r, val);
+            rangeUpdate(2*seg_idx + 2, mid + 1, seg_r, a_l, a_r, val);
+            segTree[seg_idx] = segTree[2*seg_idx + 1] + segTree[2*seg_idx + 2];
+        }
+
+
+        ll ansRangeQueries(int seg_idx, int seg_l, int seg_r, int a_l, int a_r){
+            if(lz[seg_idx] != 0){
+                segTree[seg_idx] += (seg_r - seg_l + 1) * lz[seg_idx];
+                if(seg_l != seg_r){
+                    lz[2*seg_idx + 1] += lz[seg_idx];
+                    lz[2*seg_idx + 2] += lz[seg_idx];
+                }
+                lz[seg_idx] = 0;
+            }
+
+            if(seg_l > a_r || seg_r < a_l || seg_l > seg_r){
+                return 0;
+            }
+
+            if(seg_l >= a_l && seg_r <= a_r){
+                return segTree[seg_idx];
+            }
+
+            int mid = (seg_l + seg_r) >> 1;
+            // ll left = ansRangeQueries(2*seg_idx + 1, seg_l, mid, a_l, a_r);
+            // ll right = ansRangeQueries(2*seg_idx + 2, mid + 1, seg_r, a_l, a_r);
+
+            // return left + right;
+            return ansRangeQueries(2*seg_idx + 1, seg_l, mid, a_l, a_r) + ansRangeQueries(2*seg_idx + 2, mid + 1, seg_r, a_l, a_r);
+        }
+};
+
 
 #define print(...) cerr << #__VA_ARGS__ << " : ", printer(__VA_ARGS__)
 //////////////////////////// END OF HELPER FUNCTIONS ////////////////////////////

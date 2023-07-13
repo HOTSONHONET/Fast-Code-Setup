@@ -44,35 +44,23 @@ using namespace std;
 
 void solve()
 {
+    int n;
+    cin>>n;
     string s;
-    cin >> s;
-    int n = s.size();
-    int i = n - 1;
-
-    string ans = "";
-    while (i >= 0)
-    {
-        if (s[i] == '0')
-        {
-            string tmp = "";
-            tmp += s[i - 2];
-            tmp += s[i - 1];
-            i -= 3;
-            int steps;
-            sscanf(tmp, "%d", &steps);
-            // int steps = stoi(tmp);
-            ans += 'a' + int(steps - 1);
-        }
-        else
-        {
-            int steps;
-            sscanf(s[i], "%d", &steps);
-            ans += 'a' + int(steps - 1);
-            --i;
+    cin>>s;
+    int cost = 1, count = 1;
+    char c = s[0];
+    for(int i = 1; i<n; ++i){
+        if(s[i] == c) count++;
+        else{
+            c = s[i];
+            cost = max(cost, count);
+            count = 1;
         }
     }
-    reverse(ans.begin(), ans.end());
-    cout << ans << nline;
+    cost = max(cost, count);
+    cost++;
+    cout<<cost<<nline;
 }
 
 int main()
@@ -93,3 +81,4 @@ int main()
     cerr << "Time elapsed: " << 1.0 * clock() / CLOCKS_PER_SEC << " s.\n";
     return 0;
 }
+

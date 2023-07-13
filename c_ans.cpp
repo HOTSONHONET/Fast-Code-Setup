@@ -1,16 +1,7 @@
-
 #include <bits/stdc++.h>
 
-#define ipair pair<int, int>
-#define llpair pair<long long, long long>
-#define llipair pair<long long int, long long int>
+
 #define ll long long
-#define lli long long int
-#define ull unsigned long long
-#define MAXX 1000000007
-#define ull unsigned long long
-#define INF 0x3f3f3f3f
-#define nline "\n"
 #define fastio                        \
     ios_base::sync_with_stdio(false); \
     cin.tie(NULL)
@@ -24,29 +15,32 @@ using namespace std;
 #endif
 
 void solve()
-{
-    vector<string> v(2);
-    cin>>v[0];
-    cin>>v[1];
-
-    int t, q;
-    cin>>t>>q;
-
-    deque<int> block;
-    set<int> mismatch;
-
-    int n = v[0].size();
+{   
+    int n, k;
+    cin>>n>>k;
+    vector<ll> a(n), b(n);
+    for(int i = 0; i<n; ++i) cin>>a[i];
+    for(int i = 0; i<n; ++i) cin>>b[i];
+    sort(b.begin(), b.end());
+    vector<pair<ll, int>> pairs(n);
     for(int i = 0; i<n; ++i){
-        if(v[0][i] != v[1][i]) mismatch.insert(i)
+        pairs[i] = {a[i], i};
     }
-    
 
-    for(int i = 0; i<q; ++i){
-        while(!block.empty() && v[0][0] ){
-            mismatch.insert(v[0][0])
-        }
+    sort(pairs.begin(), pairs.end());
+    vector<ll> res(n);
+
+    for(int i = 0; i<n; ++i){
+        res[pairs[i].second] = b[i];
     }
+
+    for(auto &i: res){
+        cout<<i<<" ";
+    }
+    cout<<endl;
+
 }
+
 
 int main()
 {
@@ -56,9 +50,9 @@ int main()
     freopen("input_output/output.txt", "w", stdout);
 #endif
     fastio;
-
     int tcs = 1;
     cin >> tcs;
+
     for (int tc = 1; tc <= tcs; tc++)
     {
         // cout << "Case #" << tc << ": ";
