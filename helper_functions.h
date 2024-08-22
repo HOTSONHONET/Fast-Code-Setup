@@ -94,6 +94,12 @@ void printer(unordered_map<T, vector<T>> v)
     }
 }
 
+// printing pairs
+template <typename T>
+void printer(pair<T, T> v){
+    cerr<<"{ "<<v.first<<","<<v.second<<" }\n";
+}
+
 // printing map (k and v are variables)
 template <typename T>
 void printer(map<T, vector<T>> v)
@@ -123,13 +129,14 @@ template <typename T>
 void printer(vector<vector<T>> mat)
 {
     cerr << nline;
-    for (auto &v : mat)
+    for (int i=0; i<mat.size(); ++i)
     {
-        for (auto &i : v)
+        cerr<<i<<"-> [ ";
+        for (auto &j : mat[i])
         {
-            cerr << i << " ";
+            cerr << j << " ";
         }
-        cerr << nline;
+        cerr << "]"<<nline;
     }
 }
 
@@ -286,7 +293,7 @@ long long int mod_exp(long long b, long long int p, long long int m)
     return res;
 }
 
-ll expo(ll base, ll power, ll mod = MAXX)
+ll expo(ll base, ll power, ll mod = MAX)
 {
     ll ans = 1;
     while (power)

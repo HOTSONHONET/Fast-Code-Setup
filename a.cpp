@@ -146,34 +146,6 @@ ll ansRangeQueries(int seg_idx, int seg_l, int seg_r, int a_l, int a_r){
 
 
 void solve(){
-    int n, q;
-    cin>>n>>q;
-    segTree.resize(4*n + 1, 0);
-    lz.resize(4*n + 1, 0);
-    a.resize(n, 0);
-
-    for(int i = 0; i<n; ++i){
-        cin>>a[i];
-    }
-
-    build(0, 0, n - 1);
-
-    for(int i = 0; i<q; ++i){
-        int type;
-        cin>>type;
-        if(type == 1){
-            int l, r, v;
-            cin>>l>>r>>v;
-            --l, --r;
-            rangeUpdate(0, 0, n - 1, l, r, v);
-        }else{
-            int pos;
-            cin>>pos;
-            --pos;
-            ll value = ansRangeQueries(0, 0, n - 1, pos, pos);
-            cout<<value<<nline;
-        }
-    }
 
 }
 
