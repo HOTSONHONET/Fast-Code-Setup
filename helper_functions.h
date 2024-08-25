@@ -21,6 +21,12 @@ void printer()
     cerr << nline;
 }
 
+// Variadic template printer
+template <typename Head>
+void printer(Head H) {
+    cerr << " " << H;
+}
+
 template <typename Head, typename... Tail>
 void printer(Head H, Tail... T)
 {
@@ -82,8 +88,8 @@ void printer(map<T, T> v)
 }
 
 // printing unordered_map (k and v are variables)
-template <typename T>
-void printer(unordered_map<T, vector<T>> v)
+template<typename KeyType, typename ValueType>
+void printer(unordered_map<KeyType, vector<ValueType>> v)
 {
     for (auto i : v)
     {
@@ -101,8 +107,21 @@ void printer(pair<T, T> v){
 }
 
 // printing map (k and v are variables)
-template <typename T>
-void printer(map<T, vector<T>> v)
+template<typename KeyType, typename ValueType>
+void printer(map<KeyType, vector<ValueType>> v)
+{
+    for (auto i : v)
+    {
+        cerr << i.first << " -> [";
+        for (auto &v : i.second)
+            cerr << v << " ";
+        cerr << "]\n";
+    }
+}
+
+// printing map (k and v are variables)
+template<typename KeyType, typename ValueType>
+void printer(map<KeyType, set<ValueType>> v)
 {
     for (auto i : v)
     {
@@ -463,5 +482,5 @@ class SegmenTree{
 };
 
 
-#define print(...) cerr << #__VA_ARGS__ << " : ", printer(__VA_ARGS__)
+#define print(...) cerr << #__VA_ARGS__ << " : ", printer(__VA_ARGS__), cerr << nline
 //////////////////////////// END OF HELPER FUNCTIONS ////////////////////////////

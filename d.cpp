@@ -45,67 +45,24 @@ int N = 3e5 + 1;
 
 void solve()
 {      
-    int n;
-    cin>>n;
-    vector<int> v(n);
-    for(auto &i: v) cin>>i;
+    ll n, s, m;
+    cin>>n>>s>>m;
 
-    set<int> finder(v.begin(), v.end());
-
-    int max_len = finder.size();
-    vector<int> uq_elements(finder.begin(), finder.end());
-    print(uq_elements);
-    map<int, set<int>> lmapper;
-    for(int i = 0; i<n; ++i){
-        lmapper[v[i]].insert(i);
-    }
-
-    // for(int i: finder){
-    //     print(i);
-    //     for(auto idx: lmapper[i]){
-    //         print(idx);
-    //     }
-    // }
-    
-    // Generating all permutations
-    vector<int> ans;
-    do{ 
-        bool push = 1;
-        for(int i = 1, prev_idx = *lmapper[uq_elements[0]].begin(); i<max_len; ++i){
-            int ele = uq_elements[i];
-            auto lb = lmapper[ele].lower_bound(prev_idx);
-            if(lb == lmapper[ele].end()) --lb;
-            if(prev_idx > *lb){
-                push = 0;
-                break;
-            }
-
-            prev_idx = *lb;
-            print(uq_elements[i], prev_idx);
+    vector<pair<ll, ll>> v(n);
+    for(auto &p: v) cin>>p.first>>p.second;
+    v.push_back({0,0});
+    v.push_back({m, m});
+    sort(v.begin(), v.end());
+    print(v);
+    for(int i = 1; i<v.size(); ++i){
+        print((v[i].first - v[i - 1].second));
+        if((v[i].first - v[i - 1].second) >= s){
+            cout<<"YES"<<nline;
+            return;
         }
-        
-        if(push){
-            if(ans.size() == 0){
-                ans = uq_elements;
-            }else{
-                bool good = false;
-                vector<int> a = ans;
-                vector<int> b = uq_elements;
-
-                for(int i = 0; i<max_len; i += 2) a[i] *= -1, b[i] *= -1;
-
-
-                if(a > b) ans = uq_elements;
-            }
-        }
-    }while(next_permutation(uq_elements.begin(), uq_elements.end()));
-
-    cout<<max_len<<nline;
-    for(auto ele: ans){
-        cout<<ele<<" ";
     }
+    cout<<"NO"<<nline;
 
-    cout<<nline;
 }   
  
  

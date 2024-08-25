@@ -110,6 +110,7 @@ int main()
     }
 
 #ifndef ONLINE_JUDGE
+    cerr<<nline;
     cerr << "Time elapsed: " << 1.0 * clock() / CLOCKS_PER_SEC << " s.\n";
     cerr.flush(); // Ensure data is written to error.txt immediately
 #endif

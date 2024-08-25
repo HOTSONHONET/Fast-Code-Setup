@@ -43,31 +43,28 @@ using namespace std;
 
 void solve()
 {      
-    ll n;
-    cin>>n;
+    ll n, k;
+    cin>>n>>k;
+
     vector<ll> v(n);
     for(auto &i: v) cin>>i;
-    ll ans = 0;
-    vector<int> pows(n, 1);
-    for(ll i = 1; i<n; ++i){
-        if(v[i-1] > 1 && v[i] == 1){
-            cout<<-1<<nline;
-            return;
+
+    int ans = 0;
+    for(int l = 0, r = n - 1, kk = k; l<=r && kk > 0; ){
+        if(v[l] + v[r] <= kk){
+            ans += 2, kk -= (v[l++] + v[r++]);
+        }else{
+            // Checking the position of kraken
+            // If odd no. of times kraken has moved
+            // then it is at Left or first ship
+            // else right or right ship
+            if(2*min(v[l], v[r]) <= kk) ++ans, kk = 0;
+            break;
         }
-        
-        // b^(2^x) >= a^m
-        // (2^x)*log(b) >= m*log(a)
-        ll k = 0;
-        ll a =v[i-1], b = v[i];
-        while(a != 1 && a*a <= b) --k, a*a = 
-        for(;pows[i]*(double)log2(v[i]) < (double)log2(v[i-1])*pows[i-1]; pows[i] = pow(2, ++k));
-
-        ans += k;
+        print(l, r, ans);
     }
-    print(v);
-    print(pows);
-    cout<<ans<<nline;
 
+    cout<<ans<<nline;
 }   
 
 
