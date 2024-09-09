@@ -300,33 +300,17 @@ vector<T> shortestPath(vector<pair<T, T>> adj[], T V, T src, T num_nodes)
 }
 
 
-long long int mod_exp(long long b, long long int p, long long int m) 
+long long int mod_exp(long long base, long long int power, long long int mod) 
 {
     long long int res = 1;
-    while (p > 0) 
+    while (power > 0) 
 	{
-        if (p & 1) res = (res * b)%m;
-        b = (b * b)%m;
-        p >>= 1;
+        if (power & 1) res = (res * base)%mod;
+        base = (base * base)%mod;
+        power >>= 1;
     }
     return res;
 }
-
-ll expo(ll base, ll power, ll mod = MAX)
-{
-    ll ans = 1;
-    while (power)
-    {
-        if (power & 1)
-            ans = ans * base % mod;
-
-        base = base * base % mod;
-        power >>= 1;
-    }
-
-    return ans;
-}
-
 
 vector<int> seivePrimes(int n)
 {

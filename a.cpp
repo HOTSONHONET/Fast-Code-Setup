@@ -24,7 +24,6 @@ __________________________________
 #define llpair pair<long long, long long>
 #define llipair pair<long long int, long long int>
 #define ll long long
-#define lli long long int
 #define ull unsigned long long
 #define MAXX 1000000007
 #define ull unsigned long long
@@ -42,110 +41,99 @@ using namespace std;
 #define print(...) 42
 #endif
 
-vector<ll> segTree;
-vector<ll> a;
-vector<ll> lz;
-void build(int seg_idx, int seg_l, int seg_r){
-    if(seg_l == seg_r){
-        segTree[seg_idx] = a[seg_l];
-        return;
+
+ll expo(ll a, ll b, ll mod = MAXX){
+    ll res = 1;
+    while(b > 0){
+        if(b & 1) res = (res * a) % mod;
+        a = (a * a) % mod;
+        b /= 2;
     }
-    int mid = (seg_l + seg_r) >> 1;
-    build(2*seg_idx + 1, seg_l, mid);
-    build(2*seg_idx + 2, mid + 1, seg_r);
-    segTree[seg_idx] = segTree[2*seg_idx + 1] + segTree[2*seg_idx + 2];
+
+    return res%mod;
 }
 
-void update(vector<ll> &a, int seg_idx, int seg_l, int seg_r, int a_idx){
-    if(seg_l == seg_r){
-        segTree[seg_idx] = a[a_idx];
-        return;
-    }
+ll mod_inverse(ll b, ll mod = MAXX){
+    /*
 
-    int mid = (seg_l + seg_r)>>1;
-    if(a_idx <= mid)
-        update(a, 2*seg_idx + 1, seg_l, mid, a_idx);
-    else update(a, 2*seg_idx + 2, mid + 1, seg_r, a_idx);
+        As per Euclid algorithm
+        - (mod>=2)*(mod-2) to ensure we are not sending any -ve number
 
-
-    segTree[seg_idx] = (segTree[2*seg_idx + 1] ^ segTree[2*seg_idx + 2]);
+    */
+    return expo(b, (mod >=2)*(mod - 2), mod);
 }
 
-ll ansQuery(int seg_idx, int seg_l, int seg_r, int ql, int qr){
-    if(seg_l >= ql && seg_r <= qr){
-        return segTree[seg_idx];
-    }
+ll mod_prod(ll a, ll b, ll mod = MAXX){
+    /*
 
-    // Not overlapping
-    if(seg_r < ql || seg_l > qr){
-        return 0;
-    }
+        a*b % mod = (a%mod * b%mod) * mod
 
-    // if partial overlapping
-    int mid = (seg_l + seg_r) >> 1;
-    ll left = ansQuery(2*seg_idx + 1, seg_l, mid, ql, qr);
-    ll right = ansQuery(2*seg_idx + 2, mid + 1, seg_r, ql, qr);
-
-    return (left ^ right);
+    */
+   return ((a%mod) * (b%mod))%mod;
 }
 
-void rangeUpdate(int seg_idx, int seg_l, int seg_r, int a_l, int a_r, int val){
-    // check for pending updates
-    if(lz[seg_idx] != 0){
-        segTree[seg_idx] += (seg_r - seg_l + 1) * lz[seg_idx];
-        if(seg_l != seg_r){
-            lz[2*seg_idx + 1] += lz[seg_idx];
-            lz[2*seg_idx + 2] += lz[seg_idx];
-        }
-        lz[seg_idx] = 0;
-    }
+ll mod_div(ll a, ll b, ll mod = MAXX){
+    /*
+        (a/b)%mod = (a%mod * b_inverse%mod)%mod
 
-    // No overlapping case
-    if(seg_l > a_r || seg_r < a_l || seg_l > seg_r) return;
-
-    // Check if current range completely lies, postpone the lz update for children
-    if(seg_l >= a_l && seg_r <= a_r){
-        segTree[seg_idx] += (seg_r - seg_l + 1) * val;
-        if(seg_l != seg_r){
-            lz[2*seg_idx + 1] += val;
-            lz[2*seg_idx + 2] += val;
-        }
-        return;
-    }
-    int mid = (seg_l + seg_r) >> 1;
-    rangeUpdate(2*seg_idx + 1, seg_l, mid, a_l, a_r, val);
-    rangeUpdate(2*seg_idx + 2, mid + 1, seg_r, a_l, a_r, val);
-    segTree[seg_idx] = segTree[2*seg_idx + 1] + segTree[2*seg_idx + 2];
-}
-
-
-ll ansRangeQueries(int seg_idx, int seg_l, int seg_r, int a_l, int a_r){
-    if(lz[seg_idx] != 0){
-        segTree[seg_idx] += (seg_r - seg_l + 1) * lz[seg_idx];
-        if(seg_l != seg_r){
-            lz[2*seg_idx + 1] += lz[seg_idx];
-            lz[2*seg_idx + 2] += lz[seg_idx];
-        }
-        lz[seg_idx] = 0;
-    }
-
-    if(seg_l > a_r || seg_r < a_l || seg_l > seg_r){
-        return 0;
-    }
-
-    if(seg_l >= a_l && seg_r <= a_r){
-        return segTree[seg_idx];
-    }
-
-    int mid = (seg_l + seg_r) >> 1;
-    ll left = ansRangeQueries(2*seg_idx + 1, seg_l, mid, a_l, a_r);
-    ll right = ansRangeQueries(2*seg_idx + 2, mid + 1, seg_r, a_l, a_r);
-
-    return left + right;
+        where b_inverse = b^mod-2
+    */
+    return mod_prod(a, mod_inverse(b, mod), mod);
 }
 
 
 void solve(){
+    int h, w, q;
+    cin>>h>>w>>q;
+    
+    vector<vector<int>> v(h, vector<int>(w, 1));
+    int ans = h*w;
+    for(int i = 0; i<q; ++i){
+        int r, c;
+        cin>>r>>c;
+        --r, --c;
+        if(v[r][c] == 1){
+            v[r][c] = 0;
+            --ans;
+            continue;
+        }
+        for(int row = r; row>=0; --row){
+            if(v[row][c]){
+                v[row][c] = 0;
+                --ans;
+                break;
+            }
+        }
+
+        for(int row = r; row<h; ++row){
+            if(v[row][c]){
+                v[row][c] = 0;
+                --ans;
+                break;
+            }
+        }
+
+        for(int col = c; col>=0; --col){
+            if(v[r][col]){
+                v[r][col] = 0;
+                --ans;
+                break;
+            }
+        }
+
+        for(int col = c; col<w; ++col){
+            if(v[r][col]){
+                v[r][col] = 0;
+                --ans;
+                break;
+            }
+        }
+
+        // print(v);
+        
+    }
+  
+    cout<<ans<<nline;
 
 }
 

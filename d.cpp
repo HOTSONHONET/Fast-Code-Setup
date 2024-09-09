@@ -15,11 +15,11 @@ __________________________________
     |    \///////////
     /\    \/////////
    /__\    \______/
- 
+
 */
- 
+
 #include <bits/stdc++.h>
- 
+
 #define ipair pair<int, int>
 #define llpair pair<long long, long long>
 #define llipair pair<long long int, long long int>
@@ -32,36 +32,80 @@ __________________________________
 #define fastio                        \
     ios_base::sync_with_stdio(false); \
     cin.tie(NULL)
- 
+
 using namespace std;
- 
+
 #ifndef ONLINE_JUDGE
 #include "helper_functions.h"
 #else
 #define print(...) 42
 #endif
- 
-int N = 3e5 + 1;
+
+
+ll expo(ll a, ll b, ll mod = MAXX){
+    ll res = 1;
+    while(b > 0){
+        if(b & 1) res = (res * a) % mod;
+        a = (a * a) % mod;
+        b /= 2;
+    }
+
+    return res%mod;
+}
+
+ll mod_inverse(ll b, ll mod = MAXX){
+    /*
+
+        As per Euclid algorithm
+        - (mod>=2)*(mod-2) to ensure we are not sending any -ve number
+
+    */
+    return expo(b, (mod >=2)*(mod - 2), mod);
+}
+
+ll mod_prod(ll a, ll b, ll mod = MAXX){
+    /*
+
+        a*b % mod = (a%mod * b%mod) * mod
+
+    */
+   return ((a%mod) * (b%mod))%mod;
+}
+
+ll mod_div(ll a, ll b, ll mod = MAXX){
+    /*
+        (a/b)%mod = (a%mod * b_inverse%mod)%mod
+
+        where b_inverse = b^mod-2
+    */
+    return mod_prod(a, mod_inverse(b, mod), mod);
+}
+
 
 void solve()
 {      
-    ll n, s, m;
-    cin>>n>>s>>m;
+    int n, m;
+    cin>>n>>m;
 
-    vector<pair<ll, ll>> v(n);
-    for(auto &p: v) cin>>p.first>>p.second;
-    v.push_back({0,0});
-    v.push_back({m, m});
-    sort(v.begin(), v.end());
-    print(v);
-    for(int i = 1; i<v.size(); ++i){
-        print((v[i].first - v[i - 1].second));
-        if((v[i].first - v[i - 1].second) >= s){
-            cout<<"YES"<<nline;
-            return;
+    vector<ll> v(n);
+    for(auto &i: v) cin>>i;
+
+    ll max = *max_element(v.begin(), v.end());
+
+    for(int i = 0; i<m; ++i){
+        char c;
+        ll l, r;
+        cin>>c>>l>>r;
+
+        if(l <= max && max <= r){
+            if(c == '+') ++max;
+            else --max;
         }
+
+        cout<<max<<" ";
     }
-    cout<<"NO"<<nline;
+
+    cout<<nline;
 
 }   
  

@@ -41,32 +41,55 @@ using namespace std;
 #define print(...) 42
 #endif
 
-void solve()
-{      
-    ll n, k;
-    cin>>n>>k;
 
-    vector<ll> v(n);
-    for(auto &i: v) cin>>i;
-
-    int ans = 0;
-    for(int l = 0, r = n - 1, kk = k; l<=r && kk > 0; ){
-        if(v[l] + v[r] <= kk){
-            ans += 2, kk -= (v[l++] + v[r++]);
-        }else{
-            // Checking the position of kraken
-            // If odd no. of times kraken has moved
-            // then it is at Left or first ship
-            // else right or right ship
-            if(2*min(v[l], v[r]) <= kk) ++ans, kk = 0;
-            break;
-        }
-        print(l, r, ans);
+ll expo(ll a, ll b, ll mod = MAXX){
+    ll res = 1;
+    while(b > 0){
+        if(b & 1) res = (res * a) % mod;
+        a = (a * a) % mod;
+        b /= 2;
     }
 
-    cout<<ans<<nline;
-}   
+    return res%mod;
+}
 
+ll mod_inverse(ll b, ll mod = MAXX){
+    /*
+
+        As per Euclid algorithm
+        - (mod>=2)*(mod-2) to ensure we are not sending any -ve number
+
+    */
+    return expo(b, (mod >=2)*(mod - 2), mod);
+}
+
+ll mod_prod(ll a, ll b, ll mod = MAXX){
+    /*
+
+        a*b % mod = (a%mod * b%mod) * mod
+
+    */
+   return ((a%mod) * (b%mod))%mod;
+}
+
+ll mod_div(ll a, ll b, ll mod = MAXX){
+    /*
+        (a/b)%mod = (a%mod * b_inverse%mod)%mod
+
+        where b_inverse = b^mod-2
+    */
+    return mod_prod(a, mod_inverse(b, mod), mod);
+}
+
+
+
+void solve()
+{   
+    ll a, b;
+    cin>>a>>b;
+
+    cout<<(6 - a - b)<<nline;
+}   
 
 int main()
 {
@@ -79,7 +102,7 @@ int main()
 #endif
     fastio;
     int tcs = 1;
-    cin >> tcs;
+    // cin >> tcs;
 
     for (int tc = 1; tc <= tcs; tc++)
     {

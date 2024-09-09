@@ -41,6 +41,46 @@ using namespace std;
 #define print(...) 42
 #endif
 
+
+ll expo(ll a, ll b, ll mod = MAXX){
+    ll res = 1;
+    while(b > 0){
+        if(b & 1) res = (res * a) % mod;
+        a = (a * a) % mod;
+        b /= 2;
+    }
+
+    return res%mod;
+}
+
+ll mod_inverse(ll b, ll mod = MAXX){
+    /*
+
+        As per Euclid algorithm
+        - (mod>=2)*(mod-2) to ensure we are not sending any -ve number
+
+    */
+    return expo(b, (mod >=2)*(mod - 2), mod);
+}
+
+ll mod_prod(ll a, ll b, ll mod = MAXX){
+    /*
+
+        a*b % mod = (a%mod * b%mod) * mod
+
+    */
+   return ((a%mod) * (b%mod))%mod;
+}
+
+ll mod_div(ll a, ll b, ll mod = MAXX){
+    /*
+        (a/b)%mod = (a%mod * b_inverse%mod)%mod
+
+        where b_inverse = b^mod-2
+    */
+    return mod_prod(a, mod_inverse(b, mod), mod);
+}
+
 int N = 2e5 + 1;
 vector<ll> fact(N, 1);
 
@@ -64,24 +104,14 @@ ll C(ll n, ll k){
 void solve()
 {      
     
-    ll n, k;
-    cin>>n>>k;
+    int n;
+    cin>>n;
     vector<int> v(n);
     for(int &i: v) cin>>i;
+
     sort(v.begin(), v.end());
-
-    ll sum = 0;
-    for(ll l = 0, r = k-1, m_idx = k/2; r<n; ++r, ++l, ++m_idx){
-        ll median = v[m_idx];
-        // If median is 1
-        if(median){
-            ll lefts = m_idx;
-            ll rights = n - m_idx - 1;
-            sum = (sum + (median * C(lefts, m_idx - l) * C(rights, r - m_idx))) % MAXX;
-        }
-    }
-
-    cout<<sum<<nline;
+    int ans = v[n/2];
+    cout<<ans<<nline;
 
 }   
 
