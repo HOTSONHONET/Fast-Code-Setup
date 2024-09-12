@@ -81,14 +81,32 @@ ll mod_div(ll a, ll b, ll mod = MAXX){
     return mod_prod(a, mod_inverse(b, mod), mod);
 }
 
-
-
 void solve()
 {   
-    ll a, b;
-    cin>>a>>b;
+    int n, m;
+    cin>>n>>m;
+    vector<ll> v(n);
+    for(auto &i: v) cin>>i;
 
-    cout<<(6 - a - b)<<nline;
+    set<int> finder;
+    int ans = 0;
+    for(const int &i: v){
+        if(finder.find(i-1) == finder.end()){
+            ++ans;
+        }
+
+        finder.insert(i);
+    }
+
+    for(int i = 0; i<m; ++i){
+        int l, r;
+        cin>>l>>r;
+        
+    }
+
+    cout<<ans<<nline;
+
+
 }   
 
 int main()
