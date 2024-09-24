@@ -84,29 +84,55 @@ ll mod_div(ll a, ll b, ll mod = MAXX){
 
 void solve()
 {      
-    int n, m;
-    cin>>n>>m;
 
-    vector<ll> v(n);
-    for(auto &i: v) cin>>i;
+    int n, q;
+    cin>>n>>q;
+    vector<ull> points(n + 1);
 
-    ll max = *max_element(v.begin(), v.end());
+    // Things require for XOR hashing
+    random_device rd; 
+    mt19937_64 gen(rd());
+    map<ull, ull> mapping;
+    set<ull> finder = {0};
 
-    for(int i = 0; i<m; ++i){
-        char c;
-        ll l, r;
-        cin>>c>>l>>r;
+    for(int i = 1; i<=n; ++i){
+        cin>>points[i];
+        // Learn about XOR Hashing
+        ull random;
+        if(!mapping.count(points[i])){
+            do{
+                random = gen();
+            }while(finder.count(random));
 
-        if(l <= max && max <= r){
-            if(c == '+') ++max;
-            else --max;
+            finder.insert(random);
+            mapping[points[i]] = random;
+        }else{
+            random = mapping[points[i]];
         }
 
-        cout<<max<<" ";
+        points[i] = random ^ points[i - 1];
     }
 
-    cout<<nline;
+    print(points);    
+    for(int i = 0; i<q; ++i){
+        int l, r;
+        cin>>l>>r;
+        // so we have to determine whether the range
+        // can lead to a tie or the second player win
+        
 
+        // The only condition the Sherif cannot lose is making a tie
+        // which means the sum of the points in that range is even
+        // ==> But 11 8 1 1 will fail
+        // ==> Both Robin and Sherif should score the same
+        // ==> All elements in that range should appear even no. of times
+        
+        if(((points[r] ^ points[l - 1])) == 0){
+            cout<<"YES"<<nline;
+        }else{
+            cout<<"NO"<<nline;
+        }
+    }
 }   
  
  

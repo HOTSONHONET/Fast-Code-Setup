@@ -81,28 +81,100 @@ ll mod_div(ll a, ll b, ll mod = MAXX){
     return mod_prod(a, mod_inverse(b, mod), mod);
 }
 
-const int N = 1e6+1;
-vector<vector<int>> cnt(N);
+
+vector<ll> shortest_path(int n, const vector<vector<pair<int, int>>> &g, const vector<bool> &hs, int src) {
+
+    vector<vector<ll>> d(2, vector<ll>(n + 1, LLONG_MAX));
+
+    priority_queue<tuple<ll, int, int>, vector<tuple<ll, int, int>>, greater<tuple<ll, int, int>>> pq;
+
+    d[0][src] = 0;
+    pq.emplace(0, 0, src);
+
+    if(hs[src]) {
+        d[1][src] = 0;
+        pq.emplace(0, 1, src);
+    }
+
+    while(!pq.empty()) {
+        auto [current_time, state, node] = pq.top();
+        pq.pop();
+
+        if(current_time > d[state][node]) continue;
+
+        for(auto &[n_node, w] : g[node]) {
+            if(state == 0) {
+                ll new_time = current_time + w;
+                if(new_time < d[0][n_node]) {
+                    d[0][n_node] = new_time;
+                    pq.emplace(new_time, 0, n_node);
+                }
+
+                // horse available
+                if(hs[node]) {
+                    ll halved_time = current_time + (ll)(w / 2);
+                    if(halved_time < d[1][n_node]) {
+                        d[1][n_node] = halved_time;
+                        pq.emplace(halved_time, 1, n_node);
+                    }
+                }
+            }
+            else {
+                ll new_time = current_time + (ll)(w / 2);
+                if(new_time < d[1][n_node]) {
+                    d[1][n_node] = new_time;
+                    pq.emplace(new_time, 1, n_node);
+                }
+            }
+        }
+    }
+
+    vector<ll> mind(n + 1, LLONG_MAX);
+    for(int n_node = 1; n_node <= n; ++n_node){
+        mind[n_node] = min(d[0][n_node], d[1][n_node]);
+    }
+
+    return mind;
+}
 
 void solve()
 {
-    int n;
-    cin>>n;
+    ll n, m, h;
+    cin >> n >> m >> h;
 
-    map<int, int> finder;
-    vector<int> v(n);
-    int g = 1;
-    for(auto &i: v){
-        cin>>i;
-        for(auto f: cnt[i]){
-            finder[f]++;
-            if(g == INT_MIN) g = f;
-            if(finder[f] >= 2 && f>g) g = f;
-        } 
-    } 
+    vector<int> mountPoints(h);
+    for(auto &x : mountPoints) cin >> x;
 
-    cout<<g<<nline;
+    vector<bool> hs(n + 1, false);
+    for(auto &mp : mountPoints) hs[mp] = true;
 
+    vector<vector<pair<int, int>>> g(n + 1, vector<pair<int, int>>());
+    for(ll i = 0; i < m; ++i){
+        ll a, b, w;
+        cin >> a >> b >> w;
+        g[a].emplace_back(b, w);
+        g[b].emplace_back(a, w);
+    }
+
+    if(n ==1){
+        cout << 0 <<nline;
+        return;
+    }
+
+    vector<ll> marian_t = shortest_path(n, g, hs, 1);
+    vector<ll> robin_t = shortest_path(n, g, hs, n);
+
+    print(marian_t);
+    print(robin_t);
+
+    ll least_t = LLONG_MAX;
+    for(int i = 1; i <= n; i++){
+        if(marian_t[i] == LLONG_MAX || robin_t[i] == LLONG_MAX) continue;
+        ll meetingTime = max(marian_t[i], robin_t[i]);
+        least_t = min(least_t, meetingTime);
+    }
+
+    cout << (least_t == LLONG_MAX ? -1 : least_t) << nline;
 }
 
 signed main()
@@ -114,14 +186,8 @@ signed main()
 #endif
     fastio;
 
-    for(int i=1; i<=N; ++i){
-        for(int j = i; j<=N; j += i){
-            cnt[j].push_back(i);
-        }
-    }
-
     int tcs = 1;
-    // cin >> tcs;
+    cin >> tcs;
     for (int tc = 1; tc <= tcs; tc++)
     {
         solve();
