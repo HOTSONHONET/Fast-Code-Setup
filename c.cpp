@@ -82,68 +82,66 @@ ll mod_div(ll a, ll b, ll mod = MAXX){
 }
 
 void solve(){
-    ll n, m, k;
-    cin>>n>>m>>k;
+    int N, q;
+    cin>>N>>q;
+    vector<ull> a(N);
+    for(auto &i: a) cin>>i;
 
-    vector<llpair> ds(n);
-    for(int i=0; i<n; ++i){
-        ll d, a;
-        cin>>ds[i].first>>ds[i].second;
+    vector<ull> pre(N + 1);
+    for(int i = 1; i<=N; ++i) pre[i] = pre[i - 1] + a[i - 1];
+    for(int i = 0; i<N; ++i) pre.push_back(pre[N + i] + a[i]);
+    
+    
+    //a =  1 2 3
+    //b = [1 2 3] [2 3 1] [3 1 2]
+    //     0 1 2   3 4 5   6 7 8
+    // l = 4, r = 7
+    // cycle_l = 4/3 = 1
+    // cycle_r = 7/3 = 2
+    // l_pos = 4%3 = 1
+    // r_pos = 7%3 = 1  
+
+    print(pre);
+    ull n = N;
+    for(int i = 0; i<q; ++i){
+        ull l,r;
+        cin>>l>>r;
+        --l, --r;
+
+        // lets determine the position of l and r in b
+        ull cycle_l = l/n; 
+        ull cycle_r = r/n;
+        print(cycle_l, cycle_r);
+
+        // Now finding the position of l and r
+        // int their corresponding cycles
+        ull l_pos = l % n;
+        ull r_pos = r % n;
+        print(l_pos, r_pos);
+
+        ull ans = 0;
+        // For # As are present between l and r
+        // we can directly get the sum of the elements
+
+        // lets say we are covering all the elements belong to cycle_l to cycle_r
+        // then we can decide what all elements we remove
+        ans += (cycle_r - cycle_l + 1)*pre[n];
+        print(ans);
+        // Finding the position of first element and last element (wrt a) in cycle_l
+        // A[cycle_no]....A[x]....A[n-1] A[0].....A[cycle_no - 1]
+        // A[cycle_no]....A[n-1] A[0].....A[x]....A[cycle_no - 1]
+        // where x belongs to [l_pos, r_pos]
+
+        ans += pre[cycle_l] - pre[cycle_l + l_pos];
+        print(ans, cycle_l + l_pos, l_pos, pre.size());
+        ans += pre[cycle_r + r_pos + 1] - pre[n + cycle_r];
+        print(ans, n + cycle_r, cycle_r + r_pos + 1, pre.size());
+        print("----------------");
+        cout<<ans<<nline;
     }
 
-    ds.push_back({1e18, 0});
 
-    ll ans = 0;
-    stack<llpair> st;
-    for(int i = 0; i<n; ++i){
-        auto &[cur_day, cur_milk] = ds[i];
-
-        cur_milk = min(cur_milk, m*k);
-
-        ll days = cur_milk / m;
-
-        ll good = min(ds[i+1].first - cur_day, days);
-
-        ans += good;
-        cur_day += good;
-        cur_milk -= good*m;
-
-        // Checking if we have some milk left
-        // and if it not expired until the next milk acquisition day
-        // we can keep it for the consumption calculation
-        if(cur_day == ds[i+1].first && cur_milk > 0){
-            st.push({cur_day - good, cur_milk});
-        }
-
-        // Looping until we have not reached the next milk acquisition day
-        // and the cur_milk that we have not expired
-        while(cur_day < ds[i + 1].first && !st.empty() && cur_day < st.top().first + k){
-            auto &[prev_day, prev_milk] = st.top();
-            st.pop();
-
-            cur_milk += prev_milk;
-
-            days = cur_milk / m;
-
-            // Checking what is the minimum runway we have
-            // days between the next milk acquisition day
-            // current milk runway
-            // days for the prev milk to expire
-            good = min({ds[i+1].first - cur_day, days, prev_day + k - cur_day});
-
-            ans += good;
-            cur_day += good;
-            cur_milk -= good*m;
-
-            if(cur_day == ds[i+1].first && cur_milk > 0){
-                st.push({prev_day, cur_milk});
-            }
-        }
-    }
-
-    cout<<ans<<nline;
-
-};
+}
 
 
 int main()

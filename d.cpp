@@ -84,55 +84,39 @@ ll mod_div(ll a, ll b, ll mod = MAXX){
 
 void solve()
 {      
-
-    int n, q;
-    cin>>n>>q;
-    vector<ull> points(n + 1);
-
-    // Things require for XOR hashing
-    random_device rd; 
-    mt19937_64 gen(rd());
-    map<ull, ull> mapping;
-    set<ull> finder = {0};
-
-    for(int i = 1; i<=n; ++i){
-        cin>>points[i];
-        // Learn about XOR Hashing
-        ull random;
-        if(!mapping.count(points[i])){
-            do{
-                random = gen();
-            }while(finder.count(random));
-
-            finder.insert(random);
-            mapping[points[i]] = random;
-        }else{
-            random = mapping[points[i]];
-        }
-
-        points[i] = random ^ points[i - 1];
+    int n;
+    cin>>n;
+    string s;
+    cin>>s;
+    
+    if(n == 1){
+        cout<<"NO"<<nline;
+        return;
     }
 
-    print(points);    
-    for(int i = 0; i<q; ++i){
-        int l, r;
-        cin>>l>>r;
-        // so we have to determine whether the range
-        // can lead to a tie or the second player win
-        
+    bool all_ok = 1;
+    for(int i = 1; all_ok && i+1<n; ++i){
+        if(s[i] == 'W') continue;
 
-        // The only condition the Sherif cannot lose is making a tie
-        // which means the sum of the points in that range is even
-        // ==> But 11 8 1 1 will fail
-        // ==> Both Robin and Sherif should score the same
-        // ==> All elements in that range should appear even no. of times
-        
-        if(((points[r] ^ points[l - 1])) == 0){
-            cout<<"YES"<<nline;
-        }else{
-            cout<<"NO"<<nline;
+        int prev = i - 1;
+        bool prev_check = 1;
+        if(prev >= 0){
+            prev_check = s[prev] != s[i] && ;
         }
+
+        int next = i + 1;
+        bool next_check = 1;
+        if(next < n){
+            next_check = s[next] != s[i];
+        }
+
+        all_ok = all_ok && (prev_check || next_check);
     }
+
+    all_ok = all_ok && (s[0] != s[1]);
+    all_ok = all_ok && (s[n - 1] != s[n - 2]);
+
+    cout<<(all_ok ? "YES" : "NO")<<nline;
 }   
  
  
