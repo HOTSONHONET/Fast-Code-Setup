@@ -37,6 +37,7 @@
         "xstddef": "cpp",
         "xtr1common": "cpp",
         "compare": "cpp",
-        "iterator": "cpp"
+        "iterator": "cpp",
+        "concepts": "cpp"
     }
 }

@@ -26,7 +26,6 @@ __________________________________
 #define ll long long
 #define ull unsigned long long
 #define MAXX 1000000007
-#define ull unsigned long long
 #define INF 0x3f3f3f3f
 #define nline "\n"
 #define fastio                        \
@@ -81,42 +80,35 @@ ll mod_div(ll a, ll b, ll mod = MAXX){
     return mod_prod(a, mod_inverse(b, mod), mod);
 }
 
+template<typename t> 
+t gcd(t a, t b){
+    return a == 0 ? b : gcd(b%a, a);
+}
+
 
 void solve()
 {      
-    int n;
-    cin>>n;
-    string s;
-    cin>>s;
     
-    if(n == 1){
-        cout<<"NO"<<nline;
-        return;
-    }
+    int n, k;
+    cin>>n>>k;
+    vector<int> arr(n);
+    for(auto &i: arr) cin>>i;
 
-    bool all_ok = 1;
-    for(int i = 1; all_ok && i+1<n; ++i){
-        if(s[i] == 'W') continue;
-
-        int prev = i - 1;
-        bool prev_check = 1;
-        if(prev >= 0){
-            prev_check = s[prev] != s[i] && ;
+    multiset<int> finder;
+    for(int l = 0, r = 0; r < n; ++r){
+        finder.insert(arr[r]);
+        
+        int len = r - l + 1;
+        if(len == k){
+            int sz = finder.size();
+            auto median = finder.begin();
+            advance(median, int((sz -1)/2));
+            cout<<(*median)<<" ";
+            finder.erase(finder.find(arr[l++]));  
         }
-
-        int next = i + 1;
-        bool next_check = 1;
-        if(next < n){
-            next_check = s[next] != s[i];
-        }
-
-        all_ok = all_ok && (prev_check || next_check);
     }
+    cout<<nline;
 
-    all_ok = all_ok && (s[0] != s[1]);
-    all_ok = all_ok && (s[n - 1] != s[n - 2]);
-
-    cout<<(all_ok ? "YES" : "NO")<<nline;
 }   
  
  
@@ -131,7 +123,7 @@ int main()
 #endif
     fastio;
     int tcs = 1;
-    cin >> tcs;
+    // cin >> tcs;
  
     for (int tc = 1; tc <= tcs; tc++)
     {

@@ -83,18 +83,11 @@ ll mod_div(ll a, ll b, ll mod = MAXX){
 
 void solve()
 {
-    string s;
-    cin >> s;
-    int w, m;
-    cin >> w >> m;
-    for (int i = 0; i < m; ++m)
-    {
-        int l, r, k;
-        cin >> l >> r >> k;
-    }
-
-    string s = "123";
-    cout << stoi(s) << nline;
+    int n;
+    cin>>n;
+    vector<int> v(n);
+    for(auto &ele: v) cin>>ele;
+    
 }
 
 int main()
@@ -107,7 +100,7 @@ int main()
     fastio;
 
     int tcs = 1;
-    cin >> tcs;
+    // cin >> tcs;
     for (int tc = 1; tc <= tcs; tc++)
     {
         // cout << "Case #" << tc << ": ";

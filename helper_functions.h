@@ -7,9 +7,7 @@ using namespace std;
 #define llipair pair<long long int, long long int>
 #define ll long long
 #define lli long long int
-#define ull unsigned long long
 #define MAX 1000000007
-#define ull unsigned long long
 #define INF 0x3f3f3f3f
 #define nline "\n"
 
@@ -36,17 +34,16 @@ void printer(Head H, Tail... T)
 
 // printing vectors
 template <typename T>
-void printer(vector<T> v)
+void printer(const vector<T> &v)
 {
     cerr << " [";
-    for (auto i : v)
-        cerr << i << " ";
+    for (auto i : v) cerr << i << " ";
     cerr << "] \n";
 }
 
 // printing sets
 template <typename T>
-void printer(set<T> v)
+void printer(const set<T> &v)
 {
     for (auto i : v)
         cerr << i << " ";
@@ -55,7 +52,7 @@ void printer(set<T> v)
 
 // printing multisets
 template <typename T>
-void printer(multiset<T> v)
+void printer(const multiset<T> &v)
 {
     for (auto i : v)
         cerr << i << " ";
@@ -64,32 +61,42 @@ void printer(multiset<T> v)
 
 // printing unordered_sets
 template <typename T>
-void printer(unordered_set<T> v)
+void printer(const unordered_set<T> &v)
 {
     for (auto i : v)
         cerr << i << " ";
     cerr << "\n";
 }
 
-// printing unordered_map (k and v are variables)
+// printing deque
 template <typename T>
-void printer(unordered_map<T, T> v)
+void printer(const deque<T> &dq){
+    for(int i = 0; i<dq.size(); ++i){
+        cerr << i <<" - ";
+        printer(dq[i]);
+        cerr<<" | ";
+    }
+}
+
+// printing unordered_map (k and v are variables)
+template <typename T, typename V>
+void printer(const unordered_map<T, V> &mapper)
 {
-    for (auto i : v)
+    for (auto i : mapper)
         cerr << i.first << " -> " << i.second << "\n";
 }
 
 // printing map (k and v are variables)
-template <typename T>
-void printer(map<T, T> v)
+template <typename T, typename V>
+void printer(const map<T, V> &mapper)
 {
-    for (auto i : v)
+    for (auto i : mapper)
         cerr << i.first << " -> " << i.second << "\n";
 }
 
 // printing unordered_map (k and v are variables)
 template<typename KeyType, typename ValueType>
-void printer(unordered_map<KeyType, vector<ValueType>> v)
+void printer(const unordered_map<KeyType, vector<ValueType>> &v)
 {
     for (auto i : v)
     {
@@ -101,27 +108,27 @@ void printer(unordered_map<KeyType, vector<ValueType>> v)
 }
 
 // printing pairs
-template <typename T>
-void printer(pair<T, T> v){
+template <typename T1, typename T2>
+void printer(const pair<T1, T2> &v){
     cerr<<"{ "<<v.first<<","<<v.second<<" }\n";
 }
 
 // printing map (k and v are variables)
 template<typename KeyType, typename ValueType>
-void printer(map<KeyType, vector<ValueType>> v)
+void printer(const map<KeyType, vector<ValueType>> &v)
 {
+    cerr<<"here"<<nline;
     for (auto i : v)
     {
         cerr << i.first << " -> [";
-        for (auto &v : i.second)
-            cerr << v << " ";
+        for (auto &v : i.second) printer(v);
         cerr << "]\n";
     }
 }
 
 // printing map (k and v are variables)
 template<typename KeyType, typename ValueType>
-void printer(map<KeyType, set<ValueType>> v)
+void printer(const map<KeyType, set<ValueType>> &v)
 {
     for (auto i : v)
     {
@@ -133,19 +140,32 @@ void printer(map<KeyType, set<ValueType>> v)
 }
 
 // printing vector containing pairs
-template <typename T>
-void printer(vector<pair<T, T>> v)
+template <typename T1, typename T2>
+void printer(const vector<pair<T1, T2>> v)
 {
     cerr << "[ ";
-    for (auto i : v)
-        cerr << "{" << i.first << "," << i.second << "},";
+    for (auto &i : v) printer(i);
     cerr << "]"
          << "\n";
 }
 
+// printing vector of vector of pairs
+template <typename T1, typename T2>
+void printer(vector<vector<pair<T1, T2>>> v){
+    cerr<<nline;
+    for(int i = 0; i<v.size(); ++i){
+        cerr<<i<<" -> [";
+        for(int j = 0; j<v[i].size(); ++j){
+            cerr<<"{"<<v[i][j].first<<","<<v[i][j].second<<"},";
+        }
+
+        cerr<<" ]"<<nline;
+    }
+}
+
 // printing matrix
 template <typename T>
-void printer(vector<vector<T>> mat)
+void printer(const vector<vector<T>> &mat)
 {
     cerr << nline;
     for (int i=0; i<mat.size(); ++i)
@@ -158,6 +178,7 @@ void printer(vector<vector<T>> mat)
         cerr << "]"<<nline;
     }
 }
+
 
 template <typename T>
 ll factorial(T n, ll mod = MAX)
@@ -202,7 +223,7 @@ void printer(priority_queue<T, vector<T>, greater<T>> pq)
     {
         T top = pq.top();
         pq.pop();
-        cerr << top << " ";
+        printer(top);
     }
     cerr << nline;
 }

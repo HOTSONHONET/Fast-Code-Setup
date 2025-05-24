@@ -81,68 +81,46 @@ ll mod_div(ll a, ll b, ll mod = MAXX){
     return mod_prod(a, mod_inverse(b, mod), mod);
 }
 
-int N = 2e5 + 1;
-vector<ll> fact(N, 1);
-
-ll inverse(ll a, ll b){
-    ll r = 1;
-    for(; b>0; b/=2, a = (a * a) % MAXX){
-        if(b&1){
-            r = (r*a) % MAXX;
-        }
-    }
-
-    return r;
-}
-
-ll C(ll n, ll k){
-    if(n < k) return 0LL;
-
-    return (fact[n] * inverse((fact[n - k] * fact[k]) % MAXX, MAXX - 2)) % MAXX;
-}
-
 void solve()
-{      
-    
+{ 
     int n;
     cin>>n;
-    vector<int> v(n);
-    for(int &i: v) cin>>i;
+    vector<int> a(n);
+    for(int i = 0; i < n; ++i) cin>>a[i];
+    if(n == 1){
+        if(a[0] % 2 == 0) cout<<0<<nline;
+        else cout<<1<<nline;
+        return;
+    }
 
-    sort(v.begin(), v.end());
-    int ans = v[n/2];
-    cout<<ans<<nline;
-
-}   
+    sort(a.begin(), a.end());
+    int ops = INT_MAX;
+    for(int i = 0; i < n; ++i) for(int j = i; j < n; ++j){
+        int s = i == j ? a[i] : a[i] + a[j];
+        if(s%2 == 0){
+            print(s);
+            ops = min(ops, i + n - j - 1);
+        }
+    }
+    cout<<ops<<nline;
+}  
 
 
 int main()
 {
 #ifndef ONLINE_JUDGE
-    freopen("input_output/input.txt", "r", stdin);
-    freopen("input_output/error.txt", "w", stderr);
-    freopen("input_output/output.txt", "w", stdout);
-    setbuf(stdout, NULL);  // Disable buffering for output.txt
-    setbuf(stderr, NULL);  // Disable buffering for error.txt
+    freopen("./input_output/input.txt", "r", stdin);
+    freopen("./input_output/error.txt", "w", stderr);
+    freopen("./input_output/output.txt", "w", stdout);
 #endif
     fastio;
-    
-    // Populating factorial
-    for(int i = 1; i<N; ++i) fact[i] = (1LL * i * fact[i - 1]) % MAXX;
-    
     int tcs = 1;
     cin >> tcs;
-
     for (int tc = 1; tc <= tcs; tc++)
     {
         // cout << "Case #" << tc << ": ";
         solve();
     }
-
-#ifndef ONLINE_JUDGE
-    cerr<<nline;
     cerr << "Time elapsed: " << 1.0 * clock() / CLOCKS_PER_SEC << " s.\n";
-    cerr.flush(); // Ensure data is written to error.txt immediately
-#endif
     return 0;
 }
