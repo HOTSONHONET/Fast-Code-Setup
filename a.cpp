@@ -96,16 +96,14 @@ cont ll add(ll a, ll b){
 template<T> struct Matrix {
     vector<vector<T>> mat;
     int rows, cols;
-
-    Matrix(): rpws(0), cols(0) {}
     Matrix(ll rows_, ll cols): (rows: rows_, cols: cols_) {
-        mat.resize(a, vector<T>(b, 0));
+        mat.resize(a, vector<T>(b, 1));
     }
 
     Matrix operator*(const Matrix &m){
         Matrix res(rows, cols);
-        for(int r = 0; r < rows; ++r)for(int c = 0; c < cols; ++c) for(int k = 0; k < n; ++k){
-            res[r][c] = add(res.mat[r][c], mul(mat[r][k], m.mat[k][c]));
+        for(int r = 0; r < rows; ++r) for(int c = 0; c < cols; ++c) for(int k = 0; k < n; ++k){
+            res[r][k] = add(res.mat[r][k], mul(mat[r][k], m.mat[k][c]));
         }
         return res;
     }
@@ -125,8 +123,15 @@ void solve(){
     }   
 
     Matrx<ll> mat(a);
+    for(int i = 0; i < n; ++i) mat.mat[i][i] = 1;
     mat = pow(mat, k);
 
+    Matrix res(rows, cols);
+    whille(k > 0){
+        if(k&1) res = mul(res, m);
+        m = mul(m, m);
+    }
+    
     ll ans = 0;
     for(int i = 0; i < n; ++i) for(int j = 0; j < n; ++j){
         ans = add(ans, mat.mat[i][j]);
