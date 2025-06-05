@@ -80,64 +80,63 @@ ll mod_div(ll a, ll b, ll mod = MAXX){
     return mod_prod(a, mod_inverse(b, mod), mod);
 }
 
+int gcd(int a, int b){
+    return b == 0 ? a : gcd(b, a%b);
+}
 
-void solve(){    
+const ll mod = 1e9 + 7;
+const ll mul(ll a, ll b) {
+    return (a*b) % mod;
+}
+
+cont ll add(ll a, ll b){
+    return (a + b) % mod;
+}
+
+template<T> struct Matrix {
+    vector<vector<T>> mat;
+    int rows, cols;
+
+    Matrix(): rpws(0), cols(0) {}
+    Matrix(ll rows_, ll cols): (rows: rows_, cols: cols_) {
+        mat.resize(a, vector<T>(b, 0));
+    }
+
+    Matrix operator*(const Matrix &m){
+        Matrix res(rows, cols);
+        for(int r = 0; r < rows; ++r)for(int c = 0; c < cols; ++c) for(int k = 0; k < n; ++k){
+            res[r][c] = add(res.mat[r][c], mul(mat[r][k], m.mat[k][c]));
+        }
+        return res;
+    }
+}
+
+void solve(){       
     int n;
-    cin>>n;
-    vector<int> d(n);
-    for(auto &ele: d) cin>>ele;
-    vector<ipair> ob(n);
-    for(auto &ele: ob) cin>>ele.first>>ele.second;
-
-    ipair range = {0, 0};
-    vector<ipair> ranges;
+    ll k;
+    vector<vector<int>> a(n, vector<int>(n, 0));
     for(int i = 0; i < n; ++i){
-        auto [l,r] = ob[i];
-        auto [rl, rr] = range;
-        if(d[i] == 1) rl++, rr++;
-        else if(d[i] == -1) rr++;
-        
-        int L = max(l, rl), R = min(r, rr);
-        if(L > R){
-            cout<<-1<<nline;
-            return;
+        for(int j = 0; j < n; ++j){
+            int a, b;
+            cin>>a>>b;
+            --a, --b;
+            graph[a][b] = 1;
         }
-        range = {L, R};
-        ranges.push_back(range);
+    }   
+
+    Matrx<ll> mat(a);
+    mat = pow(mat, k);
+
+    ll ans = 0;
+    for(int i = 0; i < n; ++i) for(int j = 0; j < n; ++j){
+        ans = add(ans, mat.mat[i][j]);
     }
 
-    print(ranges);
+    cout<<ans<<nline;
 
-    int target_h = ranges.back().first;
-    print(target_h);
-    vector<int> ans(n);
-    for(int i = n - 1; i >= 0; --i){
-        auto [l, r] = ranges[i];
-        if(d[i] != -1) target_h -= d[i], ans[i] = d[i];
-        else{
-            if(i == 0){
 
-            }else{
-                if((target_h >= ranges[i - 1].first) && (target_h <= ranges[i - 1].second)) ans[i] = 0;
-                else ans[i] = 1, target_h--;
-            }
-        }
-        
-    }
-    for(auto &ele: ans) cout<<ele<<" ";
-    cout<<nline;
-
-    // // checking ans
-    // int h = 0;
-    // int all_ok = 1;
-    // for(int i = 1; all_ok && i < n; ++i) {
-    //     auto [l, r] = ob[i];
-    //     if(ans[i] == 1) ++h;
-    //     if(!(l <= h && h <= r)) all_ok = 0;
-    // }
-
-    // print(all_ok);
 } 
+
  
 
 int main()
@@ -150,7 +149,7 @@ int main()
     fastio;
 
     int tcs = 1;
-    cin >> tcs;
+    // cin >> tcs;
 
     for (int tc = 1; tc <= tcs; tc++)
     {

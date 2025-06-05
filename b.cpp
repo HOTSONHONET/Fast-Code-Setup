@@ -81,28 +81,28 @@ ll mod_div(ll a, ll b, ll mod = MAXX){
     return mod_prod(a, mod_inverse(b, mod), mod);
 }
 
-void solve()
-{ 
-    int n;
-    cin>>n;
-    vector<int> a(n);
-    for(int i = 0; i < n; ++i) cin>>a[i];
-    if(n == 1){
-        if(a[0] % 2 == 0) cout<<0<<nline;
-        else cout<<1<<nline;
-        return;
-    }
+void solve(){ 
+    int x;
+    cin>>x;
 
-    sort(a.begin(), a.end());
-    int ops = INT_MAX;
-    for(int i = 0; i < n; ++i) for(int j = i; j < n; ++j){
-        int s = i == j ? a[i] : a[i] + a[j];
-        if(s%2 == 0){
-            print(s);
-            ops = min(ops, i + n - j - 1);
+    vector<int> l(3); 
+    int cnt = 0, idx = 0;
+    while(!(l[0] == x && l[1] == x && l[2] == x)){
+        switch((idx++) % 3){
+            case 0:
+                l[0] = min(x, l[2] + 1);
+                break;
+            case 1:
+                l[1] = min(x, 2*l[0]);;
+                break;
+            case 2:
+                l[2] = min(x, 2*l[0]);
+                break;
         }
+        print(l);
+        cnt++;
     }
-    cout<<ops<<nline;
+    cout<<cnt<<nline;
 }  
 
 
@@ -114,6 +114,7 @@ int main()
     freopen("./input_output/output.txt", "w", stdout);
 #endif
     fastio;
+
     int tcs = 1;
     cin >> tcs;
     for (int tc = 1; tc <= tcs; tc++)

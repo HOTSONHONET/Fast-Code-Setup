@@ -179,6 +179,23 @@ void printer(const vector<vector<T>> &mat)
     }
 }
 
+// printing tensor
+template <typename T>
+void printer(const vector<vector<vector<T>>> &tensor)
+{
+    cerr << nline;
+    for(auto &mat: tensor){
+        cerr<<"[";
+        for(auto &v: mat){
+            cerr<<"[";
+            for(auto &ele: v) cerr<<ele<<" ";
+            cerr<<"]"<<nline;
+        }
+        cerr<<"]"<<nline;
+    }
+}
+
+
 
 template <typename T>
 ll factorial(T n, ll mod = MAX)

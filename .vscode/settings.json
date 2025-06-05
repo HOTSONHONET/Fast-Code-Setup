@@ -39,5 +39,6 @@
         "compare": "cpp",
         "iterator": "cpp",
         "concepts": "cpp"
-    }
+    },
+    "editor.cursorWidth": 0
 }
