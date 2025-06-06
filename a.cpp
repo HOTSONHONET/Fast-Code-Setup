@@ -80,66 +80,20 @@ ll mod_div(ll a, ll b, ll mod = MAXX){
     return mod_prod(a, mod_inverse(b, mod), mod);
 }
 
-int gcd(int a, int b){
-    return b == 0 ? a : gcd(b, a%b);
+template<typename t> 
+t gcd(t a, t b){
+    return a == 0 ? b : gcd(b%a, a);
 }
 
-const ll mod = 1e9 + 7;
-const ll mul(ll a, ll b) {
-    return (a*b) % mod;
-}
-
-cont ll add(ll a, ll b){
-    return (a + b) % mod;
-}
-
-template<T> struct Matrix {
-    vector<vector<T>> mat;
-    int rows, cols;
-    Matrix(ll rows_, ll cols): (rows: rows_, cols: cols_) {
-        mat.resize(a, vector<T>(b, 1));
-    }
-
-    Matrix operator*(const Matrix &m){
-        Matrix res(rows, cols);
-        for(int r = 0; r < rows; ++r) for(int c = 0; c < cols; ++c) for(int k = 0; k < n; ++k){
-            res[r][k] = add(res.mat[r][k], mul(mat[r][k], m.mat[k][c]));
-        }
-        return res;
-    }
-}
 
 void solve(){       
-    int n;
-    ll k;
-    vector<vector<int>> a(n, vector<int>(n, 0));
+    int n, x, y;
+    cin>>n>>x>>y;
+    vector<vector<int>> graph(n);
     for(int i = 0; i < n; ++i){
-        for(int j = 0; j < n; ++j){
-            int a, b;
-            cin>>a>>b;
-            --a, --b;
-            graph[a][b] = 1;
-        }
-    }   
-
-    Matrx<ll> mat(a);
-    for(int i = 0; i < n; ++i) mat.mat[i][i] = 1;
-    mat = pow(mat, k);
-
-    Matrix res(rows, cols);
-    whille(k > 0){
-        if(k&1) res = mul(res, m);
-        m = mul(m, m);
+        graph[i].push_back(max(0, i - 1));
+        graph[i].push_back(min(n - 1, i + 1));
     }
-    
-    ll ans = 0;
-    for(int i = 0; i < n; ++i) for(int j = 0; j < n; ++j){
-        ans = add(ans, mat.mat[i][j]);
-    }
-
-    cout<<ans<<nline;
-
-
 } 
 
  
@@ -154,7 +108,7 @@ int main()
     fastio;
 
     int tcs = 1;
-    // cin >> tcs;
+    cin >> tcs;
 
     for (int tc = 1; tc <= tcs; tc++)
     {

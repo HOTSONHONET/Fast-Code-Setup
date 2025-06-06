@@ -81,28 +81,55 @@ ll mod_div(ll a, ll b, ll mod = MAXX){
     return mod_prod(a, mod_inverse(b, mod), mod);
 }
 
-void solve(){ 
-    int x;
-    cin>>x;
 
-    vector<int> l(3); 
-    int cnt = 0, idx = 0;
-    while(!(l[0] == x && l[1] == x && l[2] == x)){
-        switch((idx++) % 3){
-            case 0:
-                l[0] = min(x, l[2] + 1);
-                break;
-            case 1:
-                l[1] = min(x, 2*l[0]);;
-                break;
-            case 2:
-                l[2] = min(x, 2*l[0]);
-                break;
-        }
-        print(l);
-        cnt++;
+template<typename t> 
+t gcd(t a, t b){
+    return a == 0 ? b : gcd(b%a, a);
+}
+
+
+void solve(){ 
+    int n, m;
+    cin>>n>>m;
+    vector<int> b(n);
+    for(auto &ele: b) cin>>ele;
+
+    vector<vector<pair<int, ll>>> graph(n);
+    for(int i = 0; i < m; ++i){ 
+        int a, b;
+        cin>>a>>b;
+        ll w;
+        cin>>w;
+        --a, --b;
+        graph[a].push_back({b, w});
     }
-    cout<<cnt<<nline;
+
+    vector<llpair> range_finder(n, {-1,-1});
+    int ans = -1;
+    range_finder[0] = {0, b[0]};
+    auto dfs = [&](auto &&self, int node, int p = -1)->void {
+        auto [L, R] = range_finder[node];
+
+        print(range_finder);
+        for(auto [n_node, w]: graph[node]){
+            if(n_node == p) continue;
+            if(w <= R){ 
+                ll tmp_L = max(L, w);
+                if(range_finder[n_node].first == -1LL) range_finder[n_node] = {tmp_L, R + b[n_node]};
+                else{
+                    auto [L_, R_] = range_finder[n_node];
+                    if(L_ > tmp_L || (L_ == tmp_L && R + b[n_node] > R_)) range_finder[n_node] = {tmp_L, R + b[n_node]};
+                }
+            }
+            self(self, n_node, node);
+        }
+    };
+
+    dfs(dfs, 0, -1);
+
+    cout<<range_finder[n - 1].first<<nline;
+
+   
 }  
 
 

@@ -82,34 +82,16 @@ ll mod_div(ll a, ll b, ll mod = MAXX){
 }
 
 
+template<typename t> 
+t gcd(t a, t b){
+    return a == 0 ? b : gcd(b%a, a);
+}
+
+
 
 void solve()
 { 
-    int n, m;
-    cin>>n>>m;
-
-    vector<ll> a(n), b(m);
-    for(auto &ele: a) cin>>ele;
-    for(auto &ele: b) cin>>ele;
-
-    ll ans = 2e9 + 100;
-    ll L = 0, R = 2e9 + 100;
-    while(L <= R){
-        ll mid = L + (R - L)/2;
-        // checking if mid is good
-        // checking whether they are covering all the points
-        ll i = 0, j = 0, cnt = 0;
-        while(i < n && j < m){
-            if(b[j] - mid <= a[i] && a[i] <= b[j] + mid) cnt++, i++;
-            else j++;
-        }
-
-        if(cnt == n) R = mid - 1, ans = mid;
-        else L = mid + 1;
-    }
-
-    cout<<ans<<nline;
-
+    
 }  
  
  
@@ -123,9 +105,19 @@ int main()
     setbuf(stderr, NULL);  // Disable buffering for error.txt
 #endif
     fastio;
+
+    const int SZ = 1e7;
+    vector<int> prime_check(SZ + 1, 1);
+    prime_check[0] = prime_check[1] = 0;
+    for(int i = 2; i <= SZ; ++i){
+        if(prime_check[i] == 0) continue;
+        primes.push_back(i);
+        if(i <= 5) print(primes);
+        for(auto j = 2*i; j <= SZ; j += i) prime_check[j] = 0;
+    }
     
     int tcs = 1;
-    // cin >> tcs;
+    cin >> tcs;
  
     for (int tc = 1; tc <= tcs; tc++)
     {

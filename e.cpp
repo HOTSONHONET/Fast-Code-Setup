@@ -81,6 +81,12 @@ ll mod_div(ll a, ll b, ll mod = MAXX){
     return mod_prod(a, mod_inverse(b, mod), mod);
 }
 
+template<typename t> 
+t gcd(t a, t b){
+    return a == 0 ? b : gcd(b%a, a);
+}
+
+
 void solve() {
     ll x, y;
     cin>>x>>y;

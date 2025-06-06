@@ -503,6 +503,51 @@ class SegmenTree{
         }
 };
 
+// Matrix exponentiation
+struct Matrix {
+    public:
+        vector<vector<ll>> t;
+        int N;
+        ll mod;
+        Matrix(int n){
+            N = n;
+            t.resize(n, vector<ll>(n));
+            mod = MAXX;
+        }
+        Matrix(vector<vector<ll>> mat){
+            t = mat;
+            N = mat.size();
+            mod = MAXX;
+        }
+
+        ll mul(ll a, ll b) {
+            return (a*b) % mod;
+        }
+
+        ll add(ll a, ll b){
+            return (a + b) % mod;
+        }
+
+
+        Matrix operator*(const Matrix &m){
+            Matrix res(N);
+            for(int r = 0; r < N; ++r) for(int c = 0; c < N; ++c) for(int k = 0; k < N; ++k){
+                res.t[r][c] = this->add(res.t[r][c], this->mul(t[r][k], m.t[k][c]));
+            }
+            return res;
+        }
+
+        Matrix operator*=(const Matrix &m){
+            return (*this) = (*this)*(m);
+        }
+
+        Matrix pow(Matrix mat, ll k){
+            for(; k > 0; k >>= 1, mat *= mat) if(k&1) (*this) = (*this) * mat;
+            return (*this);
+        }
+};
+
+
 
 #define print(...) cerr << #__VA_ARGS__ << " : ", printer(__VA_ARGS__), cerr << nline
 //////////////////////////// END OF HELPER FUNCTIONS ////////////////////////////
