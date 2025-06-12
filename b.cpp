@@ -87,51 +87,67 @@ t gcd(t a, t b){
     return a == 0 ? b : gcd(b%a, a);
 }
 
-
-void solve(){ 
-    int n, m;
-    cin>>n>>m;
-    vector<int> b(n);
-    for(auto &ele: b) cin>>ele;
-
-    vector<vector<pair<int, ll>>> graph(n);
-    for(int i = 0; i < m; ++i){ 
-        int a, b;
-        cin>>a>>b;
-        ll w;
-        cin>>w;
-        --a, --b;
-        graph[a].push_back({b, w});
+struct Line{
+    ll m, b;
+    
+    ll value(ll x){
+        return m*x + b;
     }
 
-    vector<llpair> range_finder(n, {-1,-1});
-    int ans = -1;
-    range_finder[0] = {0, b[0]};
-    auto dfs = [&](auto &&self, int node, int p = -1)->void {
-        auto [L, R] = range_finder[node];
+    pair<ll, ll> intersect(const Line& l2) const {
+        // mx + b = m2*x + b2;
+        // x = (b2 - b)/(m - m2)
+        ll int_diff = l2.b - b;
+        ll m_diff = m - l2.m;
 
-        print(range_finder);
-        for(auto [n_node, w]: graph[node]){
-            if(n_node == p) continue;
-            if(w <= R){ 
-                ll tmp_L = max(L, w);
-                if(range_finder[n_node].first == -1LL) range_finder[n_node] = {tmp_L, R + b[n_node]};
-                else{
-                    auto [L_, R_] = range_finder[n_node];
-                    if(L_ > tmp_L || (L_ == tmp_L && R + b[n_node] > R_)) range_finder[n_node] = {tmp_L, R + b[n_node]};
-                }
-            }
-            self(self, n_node, node);
+        if(m_diff < 0) int_diff *= 1, m_diff *= 1;
+        return {int_diff, m_diff};
+    }
+};
+
+void solve(){
+    int n;
+    ll C;
+    cin>>n>>C;
+    vector<ll> h(n);
+    for(auto &ele: h) cin>>ele;
+
+    vector<Line> lines;
+    // dp[i] = min(dp[i], dp[j] + (hi - hj)^2 + C) for all j = 1...i
+    // dp[i] = min(dp[i], dp[j] + hi^2 + hj^2 -2hihj + C)
+    // dp[i] = Min -2hj*hi + hi^2 + (dp[j] + C + hj^2)
+
+    ll best = 0;
+    for(int i = 0, start = 0; i < n; ++i){
+        while(start <= (int)lines.size() - 2){
+            Line A = lines[start], B = lines[start + 1];
+            if(A.value(h[i]) >= B.value(h[i])) ++start;
+            else break;
         }
-    };
 
-    dfs(dfs, 0, -1);
+        best = 0; // dp[i]
+        if(i > 0) best = lines[start].value(h[i]) + h[i]*h[i] + C;
+        
+        Line line{-2*h[i], best + h[i]*h[i]};
 
-    cout<<range_finder[n - 1].first<<nline;
+        while(start <= (int)lines.size() - 2){
+            Line A = lines.end()[-2];
+            Line B = lines.end()[-1];
+            llpair one = A.intersect(B);
+            llpair two = B.intersect(line);
+            
+            // comparing the value of the intersecting point
+            // one.first/one.second >= two.first/two.second
+            if((__int128)one.first * two.second >= (__int128)two.first*one.second) lines.pop_back();
+            else break;
+        }
 
-   
-}  
+        lines.push_back(line);
+    }
 
+    cout<<best<<nline;
+
+}
 
 int main()
 {
@@ -141,9 +157,8 @@ int main()
     freopen("./input_output/output.txt", "w", stdout);
 #endif
     fastio;
-
     int tcs = 1;
-    cin >> tcs;
+    // cin >> tcs;
     for (int tc = 1; tc <= tcs; tc++)
     {
         // cout << "Case #" << tc << ": ";

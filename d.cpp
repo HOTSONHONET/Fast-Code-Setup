@@ -89,25 +89,34 @@ t gcd(t a, t b){
 void solve()
 {      
     
-    int n, k;
-    cin>>n>>k;
-    vector<int> arr(n);
-    for(auto &i: arr) cin>>i;
+    int n;
+    cin>>n;
+    vector<string> g(n);
+    for(auto &s: g) cin>>s;
 
-    multiset<int> finder;
-    for(int l = 0, r = 0; r < n; ++r){
-        finder.insert(arr[r]);
-        
-        int len = r - l + 1;
-        if(len == k){
-            int sz = finder.size();
-            auto median = finder.begin();
-            advance(median, int((sz -1)/2));
-            cout<<(*median)<<" ";
-            finder.erase(finder.find(arr[l++]));  
+    print(g);
+    vector<vector<int>> prefix_row(n, vector<int>(n + 1));
+    for(int r = 1; r <=n; ++r) for(int c = 1; c <= n; ++c) prefix_row[r][c] = prefix_row[r][c - 1] + int(g[r - 1][c - 1] == '#');
+
+    
+    vector<vector<int>> prefix_col(n, vector<int>(n + 1));
+    for(int r = 1; r <=n; ++r) for(int c = 1; c <= n; ++c) prefix_col[r][c] = prefix_col[r - 1][c] + int(g[r - 1][c - 1] == '#');
+
+    vector<vector<int>> dp(n+1, vector<int>(n+1));
+    dp[0][0][1][1] = int(g[0][0] == '#');
+
+    for(int r1 = 1; r1 <= n; ++r1) for(int c1 = 1; c1 <= n; ++c1) {
+        for(int r2 = r1 + 1; r2 <= n; ++r2) for(int c2 = c1 + 1; c2 <= n; ++c2){
+            // counting the no of black cells in the grid
+                
+            dp[r1][c1][r2][c2] = max(r2 - r1, c2 - c1);
+            
+            dp[r1][c1][r2][c2] = min({
+                dp[r1][c1][r2][c2],
+
+            })
         }
     }
-    cout<<nline;
 
 }   
  

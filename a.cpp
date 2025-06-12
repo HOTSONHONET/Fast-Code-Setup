@@ -86,13 +86,61 @@ t gcd(t a, t b){
 }
 
 
+
 void solve(){       
-    int n, x, y;
-    cin>>n>>x>>y;
-    vector<vector<int>> graph(n);
-    for(int i = 0; i < n; ++i){
-        graph[i].push_back(max(0, i - 1));
-        graph[i].push_back(min(n - 1, i + 1));
+    int n;
+    cin>>n; 
+    vector<int> a(n);
+    for(auto &ele: a) cin>>ele;
+
+    bool all_zero_check = count(a.begin(), a.end(), 0) == n;
+    print(all_zero_check);
+    if(all_zero_check){
+        cout<<3<<nline;
+        cout<<1<<" "<<2<<nline;
+        cout<<3<<" "<<n-1<<nline;
+        cout<<1<<" "<<2<<nline;
+    }else{
+        // finding the first non-zero number
+        int idx = -1;
+        for(int i = 0; i < n; ++i) if(a[i] > 0){
+            idx = i;
+            break;
+        }
+        ++idx; // 1-based indexing
+        if(idx == 1){
+            cout<<2<<nline;
+            cout<<2<<" "<<n<<nline;
+            cout<<1<<" "<<2<<nline;
+        }else if(idx == n){
+            cout<<2<<nline;
+            cout<<1<<" "<<n-1<<nline;
+            cout<<1<<" "<<2<<nline;
+        }else{
+            // print(1);
+            int left_z = count(a.begin(), a.begin() + idx, 0);
+            int right_z = count(a.begin() + idx, a.end(), 0);
+            if(left_z == 0){
+                cout<<2<<nline;
+                cout<<idx<<" "<<n<<nline;
+                cout<<1<<" "<<idx<<nline;
+            }else if(right_z == 0){
+                cout<<2<<nline;
+                cout<<1<<" "<<idx<<nline;
+                cout<<1<<" "<<(n-idx+1)<<nline;
+            }else{
+                cout<<3<<nline;
+                if(idx == 2){
+                    cout<<1<<" "<<idx<<nline;
+                    cout<<3<<" "<<n<<nline;
+                    cout<<1<<" "<<2<<nline;
+                }else{
+                    cout<<idx<<" "<<n<<nline;
+                    cout<<1<<" "<<idx-1<<nline;
+                    cout<<1<<" "<<2<<nline;
+                }
+            }
+        }
     }
 } 
 

@@ -90,8 +90,41 @@ t gcd(t a, t b){
 
 
 void solve()
-{ 
-    
+{   
+
+
+    int h, w, n;
+    cin>>h>>w>>n;
+
+    vector<llpair> cells(n + 1);
+    for(int i = 0; i < n; ++i) cin>>cells[i].first>>cells[i].second;
+    cells.push_back({h, w});
+
+    vector<ll> dp(n + 1, 0);
+    const ll mod = 1e9 + 7;
+    const int sz = 2*max(h, w) + 1;
+    vector<ll> f(sz, 1);
+
+    for(int i = 1; i < sz; ++i) f[i] = (f[i] * f[i - 1]) % mod;
+
+    auto ways = [&](int r1, int c1, int r2, int c2)->ll {
+        return mod_div(f[r2 - r1 + c2 - c1], (f[c2]*f[c1]), mod);
+    };
+
+    sort(cells.begin(), cells.end());
+    print(cells);
+    for(int i = 0; i <= n; ++i){
+        auto [r2, c2] = cells[i];
+        dp[i] = ways(1, 1, r2, c2);
+        for(int j = 0; j < i; ++j){
+            auto [r1, c1] = cells[j];
+            dp[i] -= dp[j] * ways(r1, c1, r2, r2); // number of ways to reach from (1, 1) to jth cell and from the jth cell to the current cell
+        }
+    }
+
+    ll ans = dp.back() % mod;
+    cout<<ans<<nline;
+
 }  
  
  
@@ -105,19 +138,8 @@ int main()
     setbuf(stderr, NULL);  // Disable buffering for error.txt
 #endif
     fastio;
-
-    const int SZ = 1e7;
-    vector<int> prime_check(SZ + 1, 1);
-    prime_check[0] = prime_check[1] = 0;
-    for(int i = 2; i <= SZ; ++i){
-        if(prime_check[i] == 0) continue;
-        primes.push_back(i);
-        if(i <= 5) print(primes);
-        for(auto j = 2*i; j <= SZ; j += i) prime_check[j] = 0;
-    }
-    
     int tcs = 1;
-    cin >> tcs;
+    // cin >> tcs;
  
     for (int tc = 1; tc <= tcs; tc++)
     {
